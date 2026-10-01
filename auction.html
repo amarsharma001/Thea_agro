@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Thea Agro – Tea Auction</title>
+<style>
+:root{--line:#b7b7b7;--head:#e7e6e6;--goodbg:#c6efce;--good:#006100;--neubg:#ffeb9c;--neu:#7a4a00;--badbg:#ffc7ce;--bad:#9c0006;--blue:#1f4e79;--grey:#f2f2f2}
+*{box-sizing:border-box}
+body{font-family:Calibri,"Segoe UI",Arial,sans-serif;font-size:17px;margin:0;background:#fff;color:#111}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:1150px;margin:0 auto;padding:10px 12px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:3px solid var(--blue);padding-bottom:8px;margin-bottom:8px}
+.co{font-size:24px;font-weight:700;color:var(--blue)}
+.sub{color:#444;font-size:15px}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:1px solid #888;background:var(--grey);padding:8px 14px;border-radius:4px;color:#111}
+.btn:hover{background:#e4e4e4}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.go{background:#1e7b34;border-color:#1e7b34;color:#fff;font-weight:700}
+.btn.warn{background:#c55a11;border-color:#c55a11;color:#fff;font-weight:700}
+.btn.red{background:#b3261e;border-color:#b3261e;color:#fff}
+.btn.big{padding:14px 22px;font-size:20px}
+.btn.sm{padding:3px 8px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:default}
+.login{max-width:430px;margin:40px auto;text-align:center}
+.login input{width:100%;font-size:34px;text-align:center;letter-spacing:6px;padding:12px;border:2px solid var(--blue);border-radius:6px;margin:14px 0}
+.msg{padding:10px 12px;border:1px solid var(--line);background:var(--grey);margin:10px 0}
+.msg.bad{background:var(--badbg);color:var(--bad);border-color:var(--bad)}
+.msg.good{background:var(--goodbg);color:var(--good);border-color:var(--good)}
+.msg.neu{background:var(--neubg);color:var(--neu);border-color:#c9a400}
+.demo{background:#fff2cc;border:2px dashed #c9a400;padding:8px 10px;margin-bottom:8px;font-size:15px}
+.bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:8px 0}
+.count{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.bchips{position:sticky;top:0;z-index:6;background:#fff;margin:0 !important;padding:6px 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.chip{border:2px solid var(--line);background:#fff;border-radius:20px;padding:6px 12px;font-weight:600}
+.chip.on{border-color:var(--blue);background:#dde9f5}
+.chip.g{color:var(--good)}.chip.o{color:var(--neu)}
+table.sheet{border-collapse:collapse;width:100%}
+.sheet th,.sheet td{border:1px solid var(--line);padding:7px 9px;vertical-align:middle}
+.sheet th{background:var(--head);text-align:left;font-weight:700;white-space:nowrap}
+.sheet td.n,.sheet th.n{text-align:right;font-variant-numeric:tabular-nums}
+.sheet tr.lead td{background:var(--goodbg);color:var(--good)}
+.sheet tr.behind td{background:var(--neubg);color:var(--neu)}
+.sheet tr.sold td,.sheet tr.na td{background:#e9e9e9;color:#666}
+.sheet tr.changed td{animation:flash 1.6s}
+@keyframes flash{0%{outline:3px solid #f4b400;outline-offset:-3px}100%{outline:3px solid transparent}}
+.hi{font-size:20px;font-weight:700}
+.small{font-size:14px;font-weight:400}
+.status{font-weight:700}
+.lotc{font-weight:700;white-space:nowrap}
+.acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.note{background:#f7f7f7;border-left:4px solid var(--blue);padding:8px 10px;margin:8px 0}
+.foot{color:#555;font-size:15px;margin-top:12px}
+/* modal */
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:20}
+#modal.on{display:flex}
+.sheetbox{background:#fff;width:100%;max-width:520px;border-radius:12px 12px 0 0;padding:16px;max-height:96vh;overflow:auto}
+@media(min-width:700px){#modal{align-items:center}.sheetbox{border-radius:12px}}
+.sheetbox h3{margin:0 0 6px}
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #ddd;font-size:18px}
+.stepper{display:flex;gap:8px;align-items:stretch;margin:12px 0 6px}
+.stepper input{flex:1;min-width:0;font-size:32px;text-align:center;border:2px solid var(--blue);border-radius:6px;padding:6px}
+.stepper button{width:64px;font-size:34px;font-weight:700;border:2px solid var(--blue);background:#dde9f5;border-radius:6px}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.quick button{flex:1;min-width:70px;padding:8px 4px;border:1px solid #888;background:var(--grey);border-radius:4px;font-size:17px}
+.mb{display:flex;gap:8px;margin-top:12px}
+.mb .btn{flex:1}
+#toasts{position:fixed;left:0;right:0;top:8px;z-index:30;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
+.toast{pointer-events:auto;max-width:560px;width:calc(100% - 20px);padding:12px 14px;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.3);font-weight:600}
+.toast.good{background:var(--goodbg);color:var(--good);border:1px solid var(--good)}
+.toast.bad{background:var(--badbg);color:var(--bad);border:1px solid var(--bad)}
+.toast.neu{background:var(--neubg);color:var(--neu);border:1px solid #c9a400}
+/* admin */
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--blue);margin:4px 0 6px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);border-bottom:0;background:var(--grey);padding:5px 12px;border-radius:5px 5px 0 0;font-weight:600}
+.tab.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.scroll{overflow:auto;max-width:100%;max-height:70vh;border:1px solid var(--line)}
+.stickybar{margin:0}
+.stickybar .top{flex-wrap:wrap}
+.stickybar .bar{margin:2px 0 4px}
+.ttl{min-width:0}
+.ttl .sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.buyer th{position:sticky;top:var(--chipsh,0px);z-index:5;box-shadow:0 2px 0 var(--line)}
+.stickybar .btn{padding:6px 12px;font-size:16px}
+.stickybar .btn.big{font-size:16px}
+.stickybar .tools{flex-wrap:nowrap;flex-shrink:0}
+.adm td,.adm th{font-size:15px;padding:4px 6px}
+.adm input[type=text],.adm input[type=number],.adm select{width:100%;border:1px solid #ccc;padding:5px;font-size:15px;background:#fff}
+.adm td.cell{padding:0;min-width:84px}
+.adm td.cell input{border:0;text-align:right;background:transparent;padding:8px 6px;font-size:16px}
+.adm tr.newrow td{background:#eaf3fb}
+.adm td.cell.win{background:var(--goodbg)}
+.adm td.cell.win input{font-weight:700;color:var(--good)}
+.adm th{position:sticky;top:0;z-index:3;box-shadow:0 1px 0 var(--line),0 -1px 0 var(--line)}
+.adm .stick{position:sticky;left:0;background:#fff;z-index:2}
+.adm th.stick{background:var(--head);z-index:4}
+.adm .stick2{position:sticky;left:var(--lotw,80px);background:#fff;z-index:2;box-shadow:2px 0 0 var(--line)}
+.adm th.stick2{background:var(--head);z-index:4}
+.adm tr.soldrow td{background:#eee}
+.hf{overflow-x:auto;margin:8px 0}.hf table{border-collapse:collapse;background:#fff}.hf th{position:static !important;vertical-align:bottom}.hf td{padding:4px;border:1px solid var(--line)}.hf input,.hf select{min-width:130px}.hf .hint{font-weight:400}
+.chg{background:#fff3c4 !important;outline:2px solid #e0a800}
+tr.draft td{background:#e8f3ff}
+#cfm{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:99;padding:16px}#cfm.on{display:flex}#cfm .box{background:#fff;border-radius:8px;max-width:460px;width:100%;padding:18px;border-top:8px solid var(--bad,#c0392b)}#cfm h3{margin:0 0 8px}#cfm .mb{display:flex;gap:8px;margin-top:14px}#cfm .mb .btn{flex:1}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:10px 0}
+.form label{display:block;font-weight:600;font-size:15px;margin-bottom:3px}
+.form input,.form select,.form textarea{width:100%;padding:8px;border:1px solid #999;border-radius:3px;font-size:16px}
+h2{font-size:20px;margin:16px 0 6px;color:var(--blue)}
+.pill{display:inline-block;padding:3px 10px;border-radius:12px;font-weight:700;font-size:15px}
+.pill.on{background:var(--goodbg);color:var(--good)}.pill.off{background:var(--badbg);color:var(--bad)}.pill.sch{background:var(--neubg);color:var(--neu)}
+.hint{color:#555;font-size:14px}
+/* phones: same table, just tighter */
+@media(max-width:760px){
+ body{font-size:16px}
+ .co{font-size:20px}
+ .sheet th,.sheet td{padding:6px 5px}
+ table.buyer th{font-size:13px;white-space:normal;line-height:1.15;vertical-align:bottom}
+ table.buyer td.act{width:34%}
+ table.buyer .btn{padding:9px 6px;font-size:16px;width:100%}
+ table.buyer .btn.sm{padding:6px;font-size:14px}
+ table.buyer .acts{flex-direction:column;align-items:stretch;gap:4px}
+ table.buyer .hi{font-size:18px}
+ .status.small{font-size:13px}
+}
+</style>
+</head>
+<body>
+<div id="errbox" style="display:none;background:#ffc7ce;color:#9c0006;border:2px solid #9c0006;padding:10px;margin:8px;font-size:15px;white-space:pre-wrap"></div>
+<div class="wrap" id="app"></div>
+<div id="cfm"></div><div id="modal"></div>
+<div id="toasts"></div>
+
+<script>
+window.onerror = function (m, u, l) { var e = document.getElementById('errbox'); if (e) { e.style.display = 'block'; e.textContent = 'Page problem (please send this to Claude): ' + m + ' (line ' + l + ')'; } };
+window.addEventListener('unhandledrejection', function (ev) { window.onerror(String(ev.reason), '', 0); });
+/* ===== AUCTION CORE (all rules live here; same code runs on the server and in demo mode) ===== */
+var AuctionCore = (function () {
+  'use strict';
+
+  var SEED = {
+ "company": "Krishnakali Tea Estate",
+ "place": "P.O. Choibari, Dist: Dhubri, Assam",
+ "sales": [
+  {
+   "saleNo": "Sale No-31",
+   "date": "",
+   "lots": [
+    [
+     "482/26",
+     "Mogra I Spl",
+     20,
+     28,
+     ""
+    ],
+    [
+     "483/26",
+     "Mogra II Spl",
+     20,
+     26,
+     ""
+    ],
+    [
+     "484/26",
+     "Super Fine Spl",
+     10,
+     22,
+     ""
+    ],
+    [
+     "485/26",
+     "Super Fine Spl",
+     14,
+     22,
+     ""
+    ],
+    [
+     "486/26",
+     "Mogra Superfine Spl",
+     24,
+     24,
+     ""
+    ],
+    [
+     "487/26",
+     "Mogra Superfine Spl",
+     24,
+     24,
+     ""
+    ],
+    [
+     "488/26",
+     "Mogra Superfine Spl",
+     25,
+     24,
+     ""
+    ],
+    [
+     "489/26",
+     "Mogra Superfine Spl",
+     26,
+     24,
+     ""
+    ],
+    [
+     "490/26",
+     "Mogra Superfine Spl",
+     26,
+     24,
+     ""
+    ],
+    [
+     "491/26",
+     "Mogra Superfine Spl",
+     26,
+     24,
+     ""
+    ],
+    [
+     "492/26",
+     "Lachha Spl",
+     26,
+     20,
+     ""
+    ],
+    [
+     "493/26",
+     "Lachha Spl",
+     27,
+     20,
+     ""
+    ],
+    [
+     "494/26",
+     "Lachha Spl",
+     25,
+     20,
+     ""
+    ],
+    [
+     "495/26",
+     "Lachha Spl",
+     25,
+     20,
+     ""
+    ],
+    [
+     "496/26",
+     "Lachha Spl",
+     24,
+     20,
+     ""
+    ],
+    [
+     "497/26",
+     "Fine Spl",
+     22,
+     30,
+     ""
+    ],
+    [
+     "498/26",
+     "GT Bulk",
+     33,
+     25,
+     ""
+    ],
+    [
+     "499/26",
+     "Mogra I",
+     22,
+     28,
+     ""
+    ],
+    [
+     "500/26",
+     "Mogra II",
+     16,
+     26,
+     ""
+    ],
+    [
+     "501/26",
+     "Super Fine",
+     10,
+     22,
+     ""
+    ],
+    [
+     "502/26",
+     "Mogra II",
+     18,
+     26,
+     ""
+    ],
+    [
+     "503/26",
+     "Mogra Superfine Spl",
+     20,
+     24,
+     ""
+    ],
+    [
+     "504/26",
+     "Mogra Superfine Spl",
+     21,
+     24,
+     ""
+    ],
+    [
+     "505/26",
+     "Lachha Spl",
+     25,
+     20,
+     ""
+    ],
+    [
+     "506/26",
+     "Lachha Spl",
+     25,
+     20,
+     ""
+    ],
+    [
+     "507/26",
+     "Lachha Spl",
+     24,
+     20,
+     ""
+    ],
+    [
+     "508/26",
+     "Mogra Fine Spl",
+     18,
+     28,
+     ""
+    ],
+    [
+     "509/26",
+     "Cut Fine",
+     11,
+     22,
+     ""
+    ],
+    [
+     "510/26",
+     "Bulk II",
+     69,
+     22,
+     ""
+    ],
+    [
+     "511/26",
+     "Sumi",
+     15,
+     30,
+     ""
+    ],
+    [
+     "512/26",
+     "Yellow Leaf",
+     43,
+     30,
+     ""
+    ]
+   ]
+  },
+  {
+   "saleNo": "Sale No-32",
+   "date": "15.09.2026",
+   "lots": [
+    [
+     "499/26",
+     "Mogra I",
+     22,
+     28,
+     ""
+    ],
+    [
+     "500/26",
+     "Mogra II",
+     16,
+     26,
+     ""
+    ],
+    [
+     "501/26",
+     "Super Fine",
+     10,
+     22,
+     ""
+    ],
+    [
+     "502/26",
+     "Mogra II",
+     18,
+     26,
+     "355 sanz"
+    ],
+    [
+     "503/26",
+     "Mogra Superfine Spl",
+     20,
+     24,
+     "340 sanz"
+    ],
+    [
+     "504/26",
+     "Mogra Superfine Spl",
+     21,
+     24,
+     "340 sanz"
+    ],
+    [
+     "505/26",
+     "Lachha Spl",
+     25,
+     20,
+     "320 sanz"
+    ],
+    [
+     "506/26",
+     "Lachha Spl",
+     25,
+     20,
+     "320 sanz"
+    ],
+    [
+     "507/26",
+     "Lachha Spl",
+     24,
+     20,
+     "320 sanz"
+    ],
+    [
+     "508/26",
+     "Mogra Fine Spl",
+     18,
+     28,
+     "355 sanz"
+    ],
+    [
+     "509/26",
+     "Cut Fine",
+     11,
+     22,
+     ""
+    ],
+    [
+     "510/26",
+     "Bulk II",
+     69,
+     22,
+     ""
+    ],
+    [
+     "511/26",
+     "Sumi",
+     15,
+     30,
+     ""
+    ],
+    [
+     "512/26",
+     "Yellow Leaf",
+     43,
+     30,
+     ""
+    ]
+   ]
+  }
+ ]
+};
+
+  var SCHEMA = {
+    Settings: ['key', 'value'],
+    Sales: ['id', 'company', 'saleNo', 'date', 'place', 'mode', 'start', 'end', 'increment', 'extendMin', 'note', 'created'],
+    Lots: ['id', 'saleId', 'lotNo', 'grade', 'bags', 'perBag', 'startPrice', 'remarks', 'status', 'soldTo', 'soldPrice', 'sort', 'targetPrice'],
+    Buyers: ['id', 'saleId', 'code', 'name', 'created'],
+    Bids: ['saleId', 'lotId', 'buyerId', 'amount', 'ts'],
+    Log: ['ts', 'who', 'action', 'detail']
+  };
+  var NUMCOLS = {
+    Sales: { start: 1, end: 1, increment: 1, extendMin: 1, created: 1 },
+    Lots: { bags: 1, perBag: 1, startPrice: 1, soldPrice: 1, sort: 1, targetPrice: 1 },
+    Bids: { amount: 1, ts: 1 },
+    Log: { ts: 1 }
+  };
+
+  /* ---------- small helpers ---------- */
+  function fail(code, extra) { var e = new Error(code); e.code = code; e.extra = extra || null; return e; }
+  function errRes(e) { return { ok: false, error: e.code, extra: e.extra || null }; }
+  function round2(n) { return Math.round(n * 100) / 100; }
+  function num(v) { var n = Number(String(v == null ? '' : v).replace(/,/g, '')); return isFinite(n) ? n : 0; }
+  function norm(c) { return String(c == null ? '' : c).replace(/\D/g, ''); }
+  function uid(store, p) { return p + Math.floor(store.rand() * 1e9).toString(36) + store.now().toString(36).slice(-4); }
+  function clean(v, max) { return String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, max || 100); }
+  function find(arr, fn) { for (var i = 0; i < arr.length; i++) if (fn(arr[i])) return arr[i]; return null; }
+
+  function getSet(store, k) {
+    var r = store.read('Settings');
+    for (var i = 0; i < r.length; i++) if (r[i].key === k) return r[i].value;
+    return null;
+  }
+  function setSet(store, k, v) {
+    var r = store.read('Settings'), done = false;
+    for (var i = 0; i < r.length; i++) if (r[i].key === k) { r[i].value = v; done = true; }
+    if (!done) r.push({ key: k, value: v });
+    store.write('Settings', r);
+  }
+  function log(store, who, action, detail) {
+    store.append('Log', { ts: store.now(), who: who, action: action, detail: detail || '' });
+  }
+  function commit(store, who, action, detail) { log(store, who, action, detail); store.bump(); }
+
+  /* ---------- first-time setup ---------- */
+  function init(store, opts) {
+    opts = opts || {};
+    if (store.read('Settings').length) return;
+    var now = store.now();
+    var admin = opts.adminCode || String(10000000 + Math.floor(store.rand() * 89999999));
+    var sales = [], lots = [];
+    if (!opts.demo) {
+      sales.push({ id: 'S1', company: SEED.company, saleNo: '', date: '', place: SEED.place, mode: 'closed', start: 0, end: 0, increment: 3, extendMin: 2, note: '', created: now });
+    }
+    (opts.demo ? SEED.sales : []).forEach(function (s, i) {
+      var id = 'S' + (i + 1);
+      sales.push({ id: id, company: SEED.company, saleNo: s.saleNo, date: s.date, place: SEED.place, mode: 'closed', start: 0, end: 0, increment: 3, extendMin: 2, note: '', created: now });
+      s.lots.forEach(function (l, j) {
+        lots.push({ id: id + 'L' + (j + 1), saleId: id, lotNo: l[0], grade: l[1], bags: l[2], perBag: l[3], startPrice: 0, remarks: l[4] || '', status: 'open', soldTo: '', soldPrice: 0, sort: j + 1, targetPrice: 0 });
+      });
+    });
+    store.write('Sales', sales);
+    store.write('Lots', lots);
+    store.write('Buyers', []);
+    store.write('Bids', []);
+    store.write('Settings', [
+      { key: 'adminCode', value: admin },
+      { key: 'activeSale', value: sales[sales.length - 1].id },
+      { key: 'companies', value: JSON.stringify(['Krishnakali Tea Estate', 'Khagrabari Tea', 'Dighli Tea Estate']) }
+    ]);
+    store.bump();
+  }
+
+  /* demo only: a few buyers and bids so the page can be tried at once */
+  function seedDemo(store) {
+    init(store, { adminCode: '99999999', demo: true });
+    if (store.read('Buyers').length) return;
+    var sid = getSet(store, 'activeSale'), now = store.now();
+    var names = ['Demo Buyer 1', 'Demo Buyer 2', 'Demo Buyer 3'], codes = ['111111', '222222', '333333'];
+    store.write('Buyers', names.map(function (n, i) { return { id: 'B' + (i + 1), saleId: sid, code: codes[i], name: n, created: now }; }));
+    var lots = store.read('Lots').filter(function (l) { return l.saleId === sid; });
+    var bids = [];
+    lots.slice(0, 8).forEach(function (l, i) {
+      var base = 300 + (i % 4) * 15;
+      bids.push({ saleId: sid, lotId: l.id, buyerId: 'B2', amount: base + 3, ts: now - 60000 });
+      if (i % 2 === 0) bids.push({ saleId: sid, lotId: l.id, buyerId: 'B3', amount: base + 1, ts: now - 30000 });
+      if (i === 1 || i === 4) bids.push({ saleId: sid, lotId: l.id, buyerId: 'B1', amount: base + 5, ts: now - 10000 });
+    });
+    store.write('Bids', bids);
+    var sales = store.read('Sales');
+    sales.forEach(function (s) { if (s.id === sid) { s.mode = 'open'; } });
+    store.write('Sales', sales);
+    store.bump();
+  }
+
+  /* ---------- rules ---------- */
+  function isOpen(s, now) {
+    if (s.mode === 'open') return true;
+    if (s.mode === 'scheduled') return s.start > 0 && now >= s.start && (s.end <= 0 || now < s.end);
+    return false;
+  }
+  function throttle(store) { var n = store.failCount(); store.sleep(n > 30 ? 8000 : 1200); }
+
+  function auth(store, code) {
+    code = norm(code);
+    var res = null;
+    if (code) {
+      if (code === String(getSet(store, 'adminCode'))) res = { role: 'admin', name: 'Admin' };
+      else {
+        var mine = store.read('Buyers').filter(function (x) { return x.code === code; }), actv = getSet(store, 'activeSale');
+        var b = find(mine, function (x) { return x.saleId === actv; }) || mine[0];
+        if (b) {
+          if (b.saleId === getSet(store, 'activeSale')) res = { role: 'buyer', buyer: b, name: b.name };
+          else { throttle(store); throw fail('old_code'); }
+        }
+      }
+    }
+    if (!res) { throttle(store); throw fail('bad_code'); }
+    return res;
+  }
+
+  function activeSale(store) {
+    var id = getSet(store, 'activeSale');
+    var s = find(store.read('Sales'), function (x) { return x.id === id; });
+    if (!s) throw fail('no_sale');
+    return s;
+  }
+
+  function stats(list) {
+    var best = null, n = 0;
+    list.forEach(function (b) {
+      if (b.amount > 0) {
+        n++;
+        if (!best || b.amount > best.amount || (b.amount === best.amount && b.ts < best.ts)) best = b;
+      }
+    });
+    return { best: best, n: n };
+  }
+  function groupBids(bids, saleId) {
+    var m = {};
+    bids.forEach(function (b) { if (b.saleId === saleId) (m[b.lotId] = m[b.lotId] || []).push(b); });
+    return m;
+  }
+  function saleView(s, now) {
+    return { id: s.id, company: s.company, saleNo: s.saleNo, date: s.date, place: s.place, mode: s.mode, start: s.start, end: s.end, increment: s.increment || 3, extendMin: s.extendMin, note: s.note, open: isOpen(s, now) };
+  }
+
+  /* ---------- what a buyer is allowed to see ---------- */
+  function buyerState(store, buyer) {
+    var now = store.now(), s = activeSale(store);
+    var out = { ok: true, role: 'buyer', name: buyer.name, ver: store.ver(), now: now, sale: saleView(s, now), lots: [] };
+    if (!out.sale.open) return out;
+    var grouped = groupBids(store.read('Bids'), s.id);
+    store.read('Lots').filter(function (l) { return l.saleId === s.id; })
+      .sort(function (a, b) { return a.sort - b.sort; })
+      .forEach(function (l) {
+        var list = grouped[l.id] || [], st = stats(list);
+        var mine = find(list, function (b) { return b.buyerId === buyer.id; });
+        var sold = l.status === 'sold';
+        out.lots.push({
+          id: l.id, lotNo: l.lotNo, grade: l.grade, bags: l.bags, perBag: l.perBag, qty: l.bags * l.perBag,
+          startPrice: l.startPrice, status: l.status,
+          high: sold ? l.soldPrice : (st.best ? st.best.amount : 0),
+          my: mine ? mine.amount : 0,
+          lead: !sold && l.status === 'open' && !!st.best && st.best.buyerId === buyer.id,
+          won: sold && l.soldTo === buyer.id
+        });
+      });
+    return out;
+  }
+
+  function adminState(store, extra) {
+    var now = store.now(), s = activeSale(store);
+    var lots = store.read('Lots').filter(function (l) { return l.saleId === s.id; }).sort(function (a, b) { return a.sort - b.sort; });
+    var allBuyers = store.read('Buyers'), buyers = allBuyers.filter(function (b) { return b.saleId === s.id; });
+    var bids = store.read('Bids').filter(function (b) { return b.saleId === s.id; });
+    var out = {
+      ok: true, role: 'admin', name: 'Admin', ver: store.ver(), now: now,
+      sale: saleView(s, now),
+      lots: lots.map(function (l) { return { id: l.id, lotNo: l.lotNo, grade: l.grade, bags: l.bags, perBag: l.perBag, qty: l.bags * l.perBag, startPrice: l.startPrice, targetPrice: l.targetPrice, remarks: l.remarks, status: l.status, soldTo: l.soldTo, soldPrice: l.soldPrice }; }),
+      buyers: buyers.map(function (b) { return { id: b.id, name: b.name, code: b.code }; }),
+      bids: bids.map(function (b) { return { lotId: b.lotId, buyerId: b.buyerId, amount: b.amount, ts: b.ts }; }),
+      sales: store.read('Sales').map(function (x) { return { id: x.id, company: x.company, saleNo: x.saleNo, date: x.date, buyers: allBuyers.filter(function (b) { return b.saleId === x.id; }).length }; }),
+      companies: JSON.parse(getSet(store, 'companies') || '[]')
+    };
+    if (extra) for (var k in extra) out[k] = extra[k];
+    return out;
+  }
+
+  /* ---------- buyer places or changes a bid ---------- */
+  function bidReq(store, req) {
+    var a = auth(store, req.code);
+    if (a.role !== 'buyer') throw fail('bad_code');
+    return store.lock(function () {
+      var now = store.now(), sales = store.read('Sales'), sid = getSet(store, 'activeSale');
+      var sale = find(sales, function (x) { return x.id === sid; });
+      if (!sale || !isOpen(sale, now)) throw fail('closed');
+      var lot = find(store.read('Lots'), function (l) { return l.id === req.lotId && l.saleId === sid; });
+      if (!lot) throw fail('nolot');
+      if (lot.status === 'sold') throw fail('lot_sold');
+      if (lot.status === 'na') throw fail('lot_na');
+      var amount = round2(num(req.amount));
+      if (!(amount > 0)) throw fail('bad_amount');
+      if (lot.startPrice > 0 && amount < lot.startPrice) throw fail('below_start', { min: lot.startPrice });
+
+      var bids = store.read('Bids');
+      var lotBids = bids.filter(function (b) { return b.saleId === sid && b.lotId === lot.id; });
+      var st = stats(lotBids), high = st.best ? st.best.amount : 0;
+      var cap = Math.max(high, lot.startPrice, 0) * 10;
+      if (cap === 0) cap = 100000;
+      if (amount > cap) throw fail('too_high');
+
+      var mine = find(bids, function (b) { return b.saleId === sid && b.lotId === lot.id && b.buyerId === a.buyer.id; });
+      if (mine) { if (mine.amount !== amount) { mine.amount = amount; mine.ts = now; } }
+      else bids.push({ saleId: sid, lotId: lot.id, buyerId: a.buyer.id, amount: amount, ts: now });
+      store.write('Bids', bids);
+
+      var extended = 0;
+      if (sale.mode === 'scheduled' && sale.extendMin > 0 && sale.end > 0 && sale.end - now <= sale.extendMin * 60000) {
+        sale.end = now + sale.extendMin * 60000; extended = sale.extendMin;
+        store.write('Sales', sales);
+      }
+      commit(store, a.buyer.name, 'bid', 'Lot ' + lot.lotNo + ' = ' + amount);
+      var out = buyerState(store, a.buyer);
+      out.placed = { lotId: lot.id, amount: amount, lotNo: lot.lotNo };
+      out.extended = extended;
+      return out;
+    });
+  }
+
+  /* ---------- admin actions ---------- */
+  function newCode(store, taken) {
+    for (var i = 0; i < 200; i++) {
+      var c = String(100000 + Math.floor(store.rand() * 900000));
+      if (!taken[c]) { taken[c] = 1; return c; }
+    }
+    throw fail('no_code');
+  }
+  function takenCodes(store) {
+    var t = {}; t[String(getSet(store, 'adminCode'))] = 1;
+    store.read('Buyers').forEach(function (b) { t[b.code] = 1; });
+    return t;
+  }
+  function copyBuyers(store, fromId, toId, now) {
+    var bs = store.read('Buyers'), have = {}, n = 0;
+    bs.forEach(function (b) { if (b.saleId === toId) have[String(b.name).toLowerCase()] = 1; });
+    bs.filter(function (b) { return b.saleId === fromId; }).forEach(function (b) {
+      if (have[String(b.name).toLowerCase()]) return;
+      n++; bs.push({ id: uid(store, 'B') + n, saleId: toId, code: b.code, name: b.name, created: now });
+    });
+    store.write('Buyers', bs);
+    return n;
+  }
+  function sellLot(store, lot, buyerId, price) {
+    lot.status = 'sold';
+    if (buyerId === undefined || buyerId === null) {
+      var st = stats(store.read('Bids').filter(function (b) { return b.saleId === lot.saleId && b.lotId === lot.id; }));
+      lot.soldTo = st.best ? st.best.buyerId : '';
+      lot.soldPrice = st.best ? st.best.amount : 0;
+    } else { lot.soldTo = buyerId; lot.soldPrice = round2(num(price)); }
+  }
+
+  function adminReq(store, req) {
+    var a = auth(store, req.code);
+    if (a.role !== 'admin') throw fail('bad_code');
+    var act = req.action;
+    if (act === 'a_state') return adminState(store);
+
+    return store.lock(function () {
+      var sid = getSet(store, 'activeSale'), now = store.now();
+
+      if (act === 'a_setBid') {
+        var buyer = find(store.read('Buyers'), function (b) { return b.id === req.buyerId && b.saleId === sid; });
+        var lot = find(store.read('Lots'), function (l) { return l.id === req.lotId && l.saleId === sid; });
+        if (!buyer || !lot) throw fail('nolot');
+        var amount = round2(num(req.amount)), bids = store.read('Bids');
+        var idx = -1;
+        for (var i = 0; i < bids.length; i++) if (bids[i].saleId === sid && bids[i].lotId === lot.id && bids[i].buyerId === buyer.id) idx = i;
+        if (amount <= 0) { if (idx >= 0) bids.splice(idx, 1); }
+        else if (idx >= 0) { if (bids[idx].amount !== amount) { bids[idx].amount = amount; bids[idx].ts = now; } }
+        else bids.push({ saleId: sid, lotId: lot.id, buyerId: buyer.id, amount: amount, ts: now });
+        store.write('Bids', bids);
+        commit(store, 'Admin', 'setBid', buyer.name + ' Lot ' + lot.lotNo + ' = ' + amount);
+        return adminState(store);
+      }
+
+      if (act === 'a_saveLot') {
+        var p = req.lot || {}, lots = store.read('Lots'), l;
+        if (p.id) { l = find(lots, function (x) { return x.id === p.id && x.saleId === sid; }); if (!l) throw fail('nolot'); }
+        else {
+          var maxSort = 0; lots.forEach(function (x) { if (x.saleId === sid && x.sort > maxSort) maxSort = x.sort; });
+          l = { id: uid(store, 'L'), saleId: sid, lotNo: '', grade: '', bags: 0, perBag: 0, startPrice: 0, targetPrice: 0, remarks: '', status: 'open', soldTo: '', soldPrice: 0, sort: maxSort + 1 };
+          lots.push(l);
+        }
+        ['lotNo', 'grade', 'remarks'].forEach(function (k) { if (p[k] !== undefined) l[k] = clean(p[k], 100); });
+        ['bags', 'perBag', 'startPrice', 'targetPrice'].forEach(function (k) { if (p[k] !== undefined) l[k] = Math.max(0, round2(num(p[k]))); });
+        if (p.status !== undefined && p.status !== l.status) {
+          if (['open', 'sold', 'na'].indexOf(p.status) < 0) throw fail('bad_status');
+          if (p.status === 'sold') sellLot(store, l); else { l.status = p.status; l.soldTo = ''; l.soldPrice = 0; }
+        }
+        store.write('Lots', lots);
+        commit(store, 'Admin', 'saveLot', 'Lot ' + l.lotNo);
+        return adminState(store);
+      }
+
+      if (act === 'a_saveLots') {
+        var list = Array.isArray(req.lots) ? req.lots.slice(0, 300) : [], lotsB = store.read('Lots'), maxS = 0;
+        lotsB.forEach(function (x) { if (x.saleId === sid && x.sort > maxS) maxS = x.sort; });
+        list.forEach(function (p) {
+          var l;
+          if (p.id) { l = find(lotsB, function (x) { return x.id === p.id && x.saleId === sid; }); if (!l) return; }
+          else {
+            if (!clean(p.lotNo, 100)) return;
+            maxS += 1;
+            l = { id: uid(store, 'L'), saleId: sid, lotNo: '', grade: '', bags: 0, perBag: 0, startPrice: 0, targetPrice: 0, remarks: '', status: 'open', soldTo: '', soldPrice: 0, sort: maxS };
+            lotsB.push(l);
+          }
+          ['lotNo', 'grade', 'remarks'].forEach(function (k) { if (p[k] !== undefined) l[k] = clean(p[k], 100); });
+          ['bags', 'perBag', 'startPrice', 'targetPrice'].forEach(function (k) { if (p[k] !== undefined) l[k] = Math.max(0, round2(num(p[k]))); });
+          if (p.status !== undefined && p.status !== l.status && ['open', 'sold', 'na'].indexOf(p.status) >= 0) {
+            if (p.status === 'sold') sellLot(store, l); else { l.status = p.status; l.soldTo = ''; l.soldPrice = 0; }
+          }
+        });
+        store.write('Lots', lotsB);
+        commit(store, 'Admin', 'saveLots', list.length + ' lots');
+        return adminState(store);
+      }
+
+      if (act === 'a_sell') {
+        var lots2 = store.read('Lots'), l2 = find(lots2, function (x) { return x.id === req.lotId && x.saleId === sid; });
+        if (!l2) throw fail('nolot');
+        sellLot(store, l2, req.buyerId === undefined ? undefined : req.buyerId, req.price);
+        store.write('Lots', lots2);
+        commit(store, 'Admin', 'sell', 'Lot ' + l2.lotNo + ' to ' + l2.soldTo + ' @ ' + l2.soldPrice);
+        return adminState(store);
+      }
+
+      if (act === 'a_deleteLot') {
+        var lots3 = store.read('Lots'), keep = lots3.filter(function (x) { return !(x.id === req.lotId && x.saleId === sid); });
+        if (keep.length === lots3.length) throw fail('nolot');
+        store.write('Lots', keep);
+        store.write('Bids', store.read('Bids').filter(function (b) { return b.lotId !== req.lotId; }));
+        commit(store, 'Admin', 'deleteLot', req.lotId);
+        return adminState(store);
+      }
+
+      if (act === 'a_importLots') {
+        var rows = req.rows || [], all = store.read('Lots');
+        if (req.replace) {
+          var gone = {}; all.forEach(function (x) { if (x.saleId === sid) gone[x.id] = 1; });
+          all = all.filter(function (x) { return x.saleId !== sid; });
+          store.write('Bids', store.read('Bids').filter(function (b) { return !gone[b.lotId]; }));
+        }
+        var m = 0; all.forEach(function (x) { if (x.saleId === sid && x.sort > m) m = x.sort; });
+        rows.slice(0, 500).forEach(function (r) {
+          if (!clean(r.lotNo)) return;
+          m++;
+          all.push({ id: uid(store, 'L') + m, saleId: sid, lotNo: clean(r.lotNo), grade: clean(r.grade), bags: Math.max(0, num(r.bags)), perBag: Math.max(0, num(r.perBag)), startPrice: Math.max(0, num(r.startPrice)), targetPrice: Math.max(0, num(r.targetPrice)), remarks: clean(r.remarks), status: 'open', soldTo: '', soldPrice: 0, sort: m });
+        });
+        store.write('Lots', all);
+        commit(store, 'Admin', 'importLots', rows.length + ' rows');
+        return adminState(store);
+      }
+
+      if (act === 'a_saveSale') {
+        var sales = store.read('Sales'), s = find(sales, function (x) { return x.id === sid; }), q = req.sale || {};
+        ['company', 'saleNo', 'date', 'place'].forEach(function (k) { if (q[k] !== undefined) s[k] = clean(q[k], 120); });
+        if (q.note !== undefined) s.note = clean(q.note, 300);
+        if (q.mode !== undefined) {
+          if (['closed', 'open', 'scheduled'].indexOf(q.mode) < 0) throw fail('bad_mode');
+          s.mode = q.mode;
+        }
+        if (q.start !== undefined) s.start = Math.max(0, num(q.start));
+        if (q.end !== undefined) s.end = Math.max(0, num(q.end));
+        if (q.increment !== undefined) s.increment = num(q.increment) > 0 ? round2(num(q.increment)) : 3;
+        if (q.extendMin !== undefined) s.extendMin = Math.max(0, Math.floor(num(q.extendMin)));
+        if (s.mode === 'scheduled' && s.start > 0 && s.end > 0 && s.end <= s.start) throw fail('bad_times');
+        store.write('Sales', sales);
+        commit(store, 'Admin', 'saveSale', s.mode);
+        return adminState(store);
+      }
+
+      if (act === 'a_newSale') {
+        var sales2 = store.read('Sales'), ns = {
+          id: uid(store, 'S'), company: clean(req.company, 120), saleNo: clean(req.saleNo, 60), date: clean(req.date, 60), place: clean(req.place, 120),
+          mode: 'closed', start: 0, end: 0, increment: 3, extendMin: 2, note: '', created: now
+        };
+        sales2.push(ns); store.write('Sales', sales2);
+        if (req.copyFrom) {
+          var lotsAll = store.read('Lots'), n = 0;
+          lotsAll.filter(function (x) { return x.saleId === req.copyFrom; }).sort(function (x, y) { return x.sort - y.sort; }).forEach(function (x) {
+            n++; lotsAll.push({ id: uid(store, 'L') + n, saleId: ns.id, lotNo: x.lotNo, grade: x.grade, bags: x.bags, perBag: x.perBag, startPrice: x.startPrice, targetPrice: x.targetPrice, remarks: x.remarks, status: 'open', soldTo: '', soldPrice: 0, sort: n });
+          });
+          store.write('Lots', lotsAll);
+        }
+        if (req.copyBuyersFrom) copyBuyers(store, req.copyBuyersFrom, ns.id, now);
+        setSet(store, 'activeSale', ns.id);
+        commit(store, 'Admin', 'newSale', ns.saleNo);
+        return adminState(store);
+      }
+
+      if (act === 'a_switchSale') {
+        if (!find(store.read('Sales'), function (x) { return x.id === req.saleId; })) throw fail('no_sale');
+        setSet(store, 'activeSale', req.saleId);
+        commit(store, 'Admin', 'switchSale', req.saleId);
+        return adminState(store);
+      }
+
+      if (act === 'a_addBuyers') {
+        var names = (req.names || []).map(function (x) { return clean(x, 80); }).filter(Boolean).slice(0, 200);
+        var bs = store.read('Buyers'), taken = takenCodes(store), made = [];
+        names.forEach(function (nm) {
+          var b = { id: uid(store, 'B'), saleId: sid, code: newCode(store, taken), name: nm, created: now };
+          bs.push(b); made.push({ name: nm, code: b.code });
+        });
+        store.write('Buyers', bs);
+        commit(store, 'Admin', 'addBuyers', String(made.length));
+        return adminState(store, { created: made });
+      }
+
+      if (act === 'a_deleteBuyer') {
+        store.write('Buyers', store.read('Buyers').filter(function (b) { return b.id !== req.buyerId; }));
+        store.write('Bids', store.read('Bids').filter(function (b) { return b.buyerId !== req.buyerId; }));
+        commit(store, 'Admin', 'deleteBuyer', req.buyerId);
+        return adminState(store);
+      }
+
+      if (act === 'a_newCode') {
+        var bs2 = store.read('Buyers'), bb = find(bs2, function (b) { return b.id === req.buyerId; });
+        if (!bb) throw fail('nobuyer');
+        bb.code = newCode(store, takenCodes(store));
+        store.write('Buyers', bs2);
+        commit(store, 'Admin', 'newCode', bb.name);
+        return adminState(store);
+      }
+
+      if (act === 'a_copyBuyers') {
+        if (!req.fromSale || req.fromSale === sid) throw fail('no_sale');
+        var cn = copyBuyers(store, req.fromSale, sid, now);
+        commit(store, 'Admin', 'copyBuyers', String(cn));
+        return adminState(store, { copied: cn });
+      }
+
+      if (act === 'a_newCodeAll') {
+        var bsA = store.read('Buyers'), tk = takenCodes(store), outA = [];
+        bsA.forEach(function (b) { if (b.saleId === sid) { b.code = newCode(store, tk); outA.push({ name: b.name, code: b.code }); } });
+        store.write('Buyers', bsA);
+        commit(store, 'Admin', 'newCodeAll', String(outA.length));
+        return adminState(store, { created: outA });
+      }
+
+      if (act === 'a_clearBids') {
+        store.write('Bids', store.read('Bids').filter(function (b) { return b.saleId !== sid; }));
+        var lots4 = store.read('Lots');
+        lots4.forEach(function (x) { if (x.saleId === sid && x.status === 'sold') { x.status = 'open'; x.soldTo = ''; x.soldPrice = 0; } });
+        store.write('Lots', lots4);
+        commit(store, 'Admin', 'clearBids', sid);
+        return adminState(store);
+      }
+
+      if (act === 'a_setCompanies') {
+        var list = (req.companies || []).map(function (x) { return clean(x, 120); }).filter(Boolean).slice(0, 10);
+        if (!list.length) throw fail('bad_companies');
+        setSet(store, 'companies', JSON.stringify(list));
+        commit(store, 'Admin', 'setCompanies', list.join('|'));
+        return adminState(store);
+      }
+
+      if (act === 'a_setAdminCode') {
+        var nc = norm(req.newCode);
+        if (nc.length < 6) throw fail('short_code');
+        if (takenCodes(store)[nc] && nc !== String(getSet(store, 'adminCode'))) throw fail('code_used');
+        setSet(store, 'adminCode', nc);
+        commit(store, 'Admin', 'setAdminCode', '');
+        return adminState(store);
+      }
+
+      throw fail('bad_action');
+    });
+  }
+
+  /* ---------- entry point ---------- */
+  function handle(store, req) {
+    try {
+      req = req || {};
+      init(store);
+      var a = String(req.action || '');
+      if (a === 'state') {
+        if (req.v && req.v === store.ver() && req.role) return { ok: true, unchanged: true, now: store.now() };
+        var au = auth(store, req.code);
+        return au.role === 'admin' ? adminState(store) : buyerState(store, au.buyer);
+      }
+      if (a === 'bid') return bidReq(store, req);
+      if (a.indexOf('a_') === 0) return adminReq(store, req);
+      throw fail('bad_action');
+    } catch (e) {
+      if (e && e.code) return errRes(e);
+      throw e;
+    }
+  }
+
+  return { handle: handle, init: init, seedDemo: seedDemo, SCHEMA: SCHEMA, NUMCOLS: NUMCOLS };
+})();
+
+/* ===== DEMO STORAGE (only used when the page is not yet connected to Google) ===== */
+function makeLocalStore() {
+  var mem = {}, ok = true, P = 'theaDemo_';
+  try { localStorage.setItem(P + 't', '1'); localStorage.removeItem(P + 't'); } catch (e) { ok = false; }
+  function get(k) { try { var v = ok ? localStorage.getItem(P + k) : mem[k]; return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  function put(k, v) { var s = JSON.stringify(v); try { if (ok) localStorage.setItem(P + k, s); else mem[k] = s; } catch (e) { mem[k] = s; } }
+  return {
+    read: function (n) { return get(n) || []; },
+    write: function (n, rows) { put(n, rows); },
+    append: function (n, row) { var r = get(n) || []; r.push(row); if (r.length > 300) r = r.slice(-300); put(n, r); },
+    lock: function (fn) { return fn(); },
+    now: function () { return Date.now(); },
+    rand: function () { return Math.random(); },
+    sleep: function () {},
+    ver: function () { return String(get('ver') || 1); },
+    bump: function () { put('ver', Date.now() + Math.random()); },
+    failCount: function () { return 1; },
+    reset: function () { ['Settings','Sales','Lots','Buyers','Bids','Log','ver'].forEach(function (k) { try { if (ok) localStorage.removeItem(P + k); } catch (e) {} delete mem[k]; }); }
+  };
+}
+
+</script>
+
+<script>
+/* ======================================================================
+   >>> ONE THING TO CHANGE: paste your Google web address between the quotes <<<
+   (leave it as it is to try the page in DEMO mode)
+   ====================================================================== */
+var API_URL = "https://script.google.com/macros/s/AKfycbya7s5jRNxRChgm3SV0oEwKnluniv8a5O82s7Q6EW61KBYc7c2ynBUJ-suSNj4Yrmk/exec";
+/* ====================================================================== */
+
+var DEMO = !/^https:\/\//.test(API_URL);
+var demoStore = null;
+if (DEMO) { demoStore = makeLocalStore(); AuctionCore.seedDemo(demoStore); }
+
+function api(req) {
+  if (DEMO) {
+    return new Promise(function (res) {
+      setTimeout(function () {
+        try { res(JSON.parse(JSON.stringify(AuctionCore.handle(demoStore, req)))); }
+        catch (e) { res({ ok: false, error: 'server' }); }
+      }, 150);
+    });
+  }
+  return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req) })
+    .then(function (r) { return r.json(); })
+    .catch(function () { return { ok: false, error: 'network' }; });
+}
+
+/* ---------- words (buyers can switch English / Hindi) ---------- */
+var T = {
+  en: {
+    enterNumber: 'Enter your secret code', enterHelp: 'This secret code was given to you by Thea Agro. Please do not share it with anyone.', enter: 'Enter',
+    bad_code: 'This secret code is not correct. Please check and try again.', old_code: 'This secret code is for an earlier sale. Please ask Thea Agro for your new secret code.',
+    network: 'Cannot connect. Please check your internet and try again.', server: 'Something went wrong. Please try again.',
+    notOpen: 'The auction is not open right now.', opensAt: 'It will open on {when}.', comeBack: 'Please come back at that time. This page updates by itself.', closedNow: 'The auction is closed. Thank you!',
+    hello: 'Welcome, {name}', logout: 'Exit', closesIn: 'Auction closes in', noEnd: 'Auction is open', lastMin: '⏰ Last minutes! Raise your bids now.',
+    lot: 'Lot', grade: 'Grade', bags: 'Bags', kg: 'Total kg', highest: 'Highest bid (₹/kg)', yourBid: 'Your bid (₹/kg)', startAt: 'Start ₹{p}', bidsN: '{n} bids', noBidsYet: 'No bids yet', noLots: 'No lots are listed yet. Please check again a little later.',
+    leading: '✔ You are highest', behind: '⚠ Someone is ahead. Raise your bid!', notYet: '⚠ Not highest. Bid now!', first: 'Be the first to bid',
+    bid: 'Bid', raiseTo: '▲ Bid ₹{a}', change: 'Change bid', other: 'Other amount', sold: 'SOLD', won: '✔ You got this lot at ₹{p}/kg', na: 'Not available',
+    sumLead: 'Highest: {n}', sumBehind: 'Need higher bid: {n}', sumNone: 'No bid yet: {n}', all: 'All lots',
+    mTitle: 'Lot {lot} – {grade}', mHigh: 'Highest bid now', mMine: 'Your bid now', mNone: 'none', mNew: 'Your new bid (₹ per kg)',
+    belowHigh: '⚠ Your bid is LOWER than the highest bid (₹{h}). You will not be the highest.', sameHigh: '⚠ Same as the highest bid (₹{h}). The earlier bidder stays ahead. Bid a little more.', confirmAnyway: 'Confirm ₹{a} anyway', mTotal: 'About ₹{t} for {kg} kg', willLead: '✔ With this bid you will be the highest.', notLead: '⚠ This is not enough to be the highest. The highest bid is ₹{h}.',
+    already: 'This is your bid already.', bigJump: '⚠ This is more than ₹300 above the highest bid (₹{h}). Please check the amount.',
+    confirm: '✔ Confirm my bid of ₹{a}', sure: 'Yes, I am sure – confirm ₹{a}', cancel: 'Cancel', saving: 'Saving…',
+    saved: '✔ Your bid of ₹{a} is saved for Lot {lot}.', lost: 'Lot {lot}: someone bid ₹{h}. Your bid is no longer the highest. Bid again!', again: 'Bid again',
+    extended: 'Time extended by {m} minutes because of a new bid.',
+    closed: 'The auction is closed. Your bid was not saved.', min_raise: 'Please bid at least ₹{min}.', below_start: 'The bid must be at least ₹{min}.', too_high: 'This amount looks too high. Please check.',
+    lot_sold: 'This lot is already sold.', lot_na: 'This lot is not available.', bad_amount: 'Please enter a correct amount.', nolot: 'This lot was not found.',
+    perKg: 'All bids are in rupees (₹) per kg.', canChange: 'You can change your bid at any time before the auction closes.', lang: 'हिन्दी', upd: 'Updated', back: '← Thea Agro website',
+    contact: 'Any problem? Write to thea.agro25@gmail.com'
+  },
+  hi: {
+    enterNumber: 'अपना कोड डालें', enterHelp: 'यह कोड आपको थिया एग्रो ने दिया है। कृपया इसे किसी को न दें।', enter: 'अंदर जाएँ',
+    bad_code: 'यह कोड सही नहीं है। कृपया जाँचकर दोबारा डालें।', old_code: 'यह कोड पिछली बिक्री का है। कृपया थिया एग्रो से नया कोड लें।',
+    network: 'इंटरनेट नहीं चल रहा। कृपया जाँचकर फिर कोशिश करें।', server: 'कुछ गड़बड़ हुई। कृपया फिर कोशिश करें।',
+    notOpen: 'नीलामी अभी शुरू नहीं है।', opensAt: 'यह {when} को शुरू होगी।', comeBack: 'कृपया उस समय वापस आएँ। यह पेज अपने आप बदल जाएगा।', closedNow: 'नीलामी बंद हो गई है। धन्यवाद!',
+    hello: 'स्वागत है, {name}', logout: 'बाहर निकलें', closesIn: 'नीलामी बंद होने में', noEnd: 'नीलामी चालू है', lastMin: '⏰ आख़िरी समय! अभी अपनी बोली बढ़ाएँ।',
+    lot: 'लॉट', grade: 'ग्रेड', bags: 'बोरे', kg: 'कुल किलो', highest: 'सबसे ऊँची बोली (₹/किलो)', yourBid: 'आपकी बोली (₹/किलो)', startAt: 'शुरुआत ₹{p}', bidsN: '{n} बोलियाँ', noBidsYet: 'अभी कोई बोली नहीं', noLots: 'अभी कोई लॉट नहीं है। कृपया थोड़ी देर बाद देखें।',
+    leading: '✔ आप सबसे ऊँचे हैं', behind: '⚠ कोई आगे है। बोली बढ़ाएँ!', notYet: '⚠ सबसे ऊँची नहीं। अभी बोली लगाएँ!', first: 'सबसे पहले बोली लगाएँ',
+    bid: 'बोली लगाएँ', raiseTo: '▲ ₹{a} की बोली लगाएँ', change: 'बोली बदलें', other: 'दूसरी रकम', sold: 'बिक गया', won: '✔ यह लॉट आपको ₹{p}/किलो पर मिला', na: 'उपलब्ध नहीं',
+    sumLead: 'सबसे ऊँची: {n}', sumBehind: 'बोली बढ़ानी है: {n}', sumNone: 'अभी बोली नहीं: {n}', all: 'सभी लॉट',
+    mTitle: 'लॉट {lot} – {grade}', mHigh: 'अभी सबसे ऊँची बोली', mMine: 'आपकी अभी की बोली', mNone: 'कोई नहीं', mNew: 'आपकी नई बोली (₹ प्रति किलो)',
+    belowHigh: '⚠ आपकी बोली सबसे ऊँची बोली (₹{h}) से कम है। आप सबसे ऊँचे नहीं होंगे।', sameHigh: '⚠ यह सबसे ऊँची बोली (₹{h}) के बराबर है। पहले वाला आगे रहेगा। थोड़ी ज़्यादा लगाएँ।', confirmAnyway: 'फिर भी ₹{a} पक्का करें', mTotal: '{kg} किलो के लिए लगभग ₹{t}', willLead: '✔ इस बोली से आप सबसे ऊँचे होंगे।', notLead: '⚠ यह सबसे ऊँची होने के लिए काफ़ी नहीं है। सबसे ऊँची बोली ₹{h} है।',
+    already: 'यही आपकी बोली पहले से है।', bigJump: '⚠ यह सबसे ऊँची बोली (₹{h}) से ₹300 से ज़्यादा ऊपर है। कृपया रकम जाँच लें।',
+    confirm: '✔ ₹{a} की बोली पक्की करें', sure: 'हाँ, मुझे पक्का पता है – ₹{a} पक्का करें', cancel: 'रद्द करें', saving: 'दर्ज हो रहा है…',
+    saved: '✔ लॉट {lot} पर आपकी ₹{a} की बोली दर्ज हो गई।', lost: 'लॉट {lot}: किसी ने ₹{h} की बोली लगाई। आपकी बोली अब सबसे ऊँची नहीं है। फिर से बोली लगाएँ!', again: 'फिर से बोली लगाएँ',
+    extended: 'नई बोली के कारण समय {m} मिनट बढ़ा दिया गया।',
+    closed: 'नीलामी बंद हो गई है। आपकी बोली दर्ज नहीं हुई।', min_raise: 'कृपया कम से कम ₹{min} की बोली लगाएँ।', below_start: 'बोली कम से कम ₹{min} होनी चाहिए।', too_high: 'यह रकम बहुत ज़्यादा लग रही है। कृपया जाँचें।',
+    lot_sold: 'यह लॉट बिक चुका है।', lot_na: 'यह लॉट उपलब्ध नहीं है।', bad_amount: 'कृपया सही रकम डालें।', nolot: 'यह लॉट नहीं मिला।',
+    perKg: 'सभी बोलियाँ रुपये (₹) प्रति किलो में हैं।', canChange: 'नीलामी बंद होने से पहले आप कभी भी अपनी बोली बदल सकते हैं।', lang: 'English', upd: 'अपडेट', back: '← थिया एग्रो वेबसाइट',
+    contact: 'कोई समस्या? thea.agro25@gmail.com पर लिखें'
+  }
+};
+var lang = 'en';
+try { lang = localStorage.getItem('thea_lang') || 'en'; } catch (e) {}
+function t(k, p) {
+  var s = (T[lang] && T[lang][k]) || T.en[k] || k;
+  if (p) for (var x in p) s = s.split('{' + x + '}').join(p[x]);
+  return s;
+}
+
+/* ---------- helpers ---------- */
+function $(s) { return document.querySelector(s); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function inr(n) { return Number(n).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+function round2(n) { return Math.round(n * 100) / 100; }
+var offset = 0;
+function nowMs() { return Date.now() + offset; }
+function fmtWhen(ms) {
+  return new Date(ms).toLocaleString(lang === 'hi' ? 'hi-IN' : 'en-IN', { timeZone: 'Asia/Kolkata', weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+}
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+function fmtCount(ms) {
+  if (ms < 0) ms = 0; var s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+  return pad(h) + ':' + pad(m) + ':' + pad(s % 60);
+}
+function istInput(ms) { if (!ms) return ''; return new Date(ms + 19800000).toISOString().slice(0, 16); }
+function istParse(v) { if (!v) return 0; var d = Date.parse(v + ':00+05:30'); return isNaN(d) ? 0 : d; }
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; }
+
+function toast(msg, kind, ms, action) {
+  var el = document.createElement('div');
+  el.className = 'toast ' + (kind || 'neu');
+  el.innerHTML = esc(msg) + (action ? ' <button class="btn sm pri" style="margin-left:8px">' + esc(action.label) + '</button>' : '');
+  if (action) el.querySelector('button').onclick = function () { el.remove(); action.fn(); };
+  $('#toasts').appendChild(el);
+  setTimeout(function () { el.remove(); }, ms || 6000);
+}
+
+/* ---------- state ---------- */
+var code = '', S = null, poll = null, tick = null, filter = 'all', tab = 'bids', busy = false;
+var seq = 0, applied = 0, prevLead = {}, prevHigh = {}, prevEnd = 0, changedLots = {}, pendingRender = false, lastOk = 0;
+
+function isEditing() { var a = document.activeElement; return a && a !== document.body && /INPUT|TEXTAREA|SELECT/.test(a.tagName) && $('#app').contains(a); }
+
+function apply(res, opts) {
+  opts = opts || {};
+  if (!res || !res.ok) return false;
+  if (res.unchanged) { offset = res.now - Date.now(); return true; }
+  offset = res.now - Date.now();
+  var isBuyer = res.role === 'buyer';
+  if (isBuyer && S && S.role === 'buyer' && S.sale.open && res.sale.open) {
+    var lost = [];
+    changedLots = {};
+    res.lots.forEach(function (l) {
+      if (prevLead[l.id] && !l.lead && l.status === 'open') lost.push(l);
+      if (prevHigh[l.id] !== undefined && prevHigh[l.id] !== l.high) changedLots[l.id] = 1;
+    });
+    lost.forEach(function (l) {
+      toast(t('lost', { lot: l.lotNo, h: inr(l.high) }), 'bad', 12000, { label: t('again'), fn: function () { openBid(l.id); } });
+      try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
+    });
+    if (prevEnd && res.sale.end > prevEnd && !res.extended) toast(t('extended', { m: res.sale.extendMin }), 'neu', 7000);
+  }
+  if (isBuyer && res.sale.open) {
+    prevLead = {}; prevHigh = {};
+    res.lots.forEach(function (l) { prevLead[l.id] = l.lead; prevHigh[l.id] = l.high; });
+    prevEnd = res.sale.end || 0;
+  }
+  S = res; lastOk = Date.now();
+  return true;
+}
+
+function refresh(force) {
+  if (!code || busy) return Promise.resolve();
+  var my = ++seq;
+  return api({ action: 'state', code: code, v: force ? '' : (S && S.ver) || '', role: S && S.role }).then(function (res) {
+    if (my < applied) return; applied = my;
+    if (!res.ok) { if (res.error === 'bad_code' || res.error === 'old_code') { doLogout(); showLogin(t(res.error)); } return; }
+    var changed = !res.unchanged;
+    apply(res);
+    if (changed) { if (isEditing() && S.role === 'admin') pendingRender = true; else render(); }
+  });
+}
+
+function startPolling() {
+  clearInterval(poll); clearInterval(tick);
+  poll = setInterval(function () { if (!document.hidden) refresh(false); }, DEMO ? 4000 : (S && S.role === 'admin' ? 10000 : 15000));
+  tick = setInterval(onTick, 1000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) refresh(true); });
+}
+var crossed = {};
+function onTick() {
+  if (!S) return;
+  var s = S.sale, n = nowMs(), c = $('#count');
+  if (S.role === 'buyer') {
+    if (s.open && s.end > 0) {
+      if (c) c.textContent = fmtCount(s.end - n);
+      var u = $('#urgent'); if (u) u.textContent = (s.end - n < 300000 && s.end - n > 0) ? t('lastMin') : '';
+    }
+    if (s.mode === 'scheduled') {
+      var key = s.id + ':' + (s.open ? 'end' + s.end : 'start' + s.start);
+      if (((!s.open && s.start && n >= s.start && (!s.end || n < s.end)) || (s.open && s.end && n >= s.end)) && !crossed[key]) { crossed[key] = 1; refresh(true); }
+    }
+  } else if (S.role === 'admin') {
+    var ac = $('#acount'); if (ac && s.end > 0) ac.textContent = s.open ? fmtCount(s.end - n) : '';
+  }
+}
+
+/* ---------- login ---------- */
+function showLogin(errText) {
+  clearInterval(poll); clearInterval(tick);
+  $('#app').innerHTML =
+    (DEMO ? demoBanner() : '') +
+    '<div class="top"><div><div class="co">Thea Agro</div><div class="sub">Tea Auction</div></div><div class="tools"><button class="btn" data-act="lang">' + esc(t('lang')) + '</button></div></div>' +
+    '<div class="login"><h1 style="margin:0">' + esc(t('enterNumber')) + '</h1>' +
+    '<div id="lf"><input id="codeIn" inputmode="numeric" autocomplete="off" maxlength="14" autofocus>' +
+    (errText ? '<div class="msg bad">' + esc(errText) + '</div>' : '') +
+    '<button class="btn pri big" id="enterBtn" style="width:100%" type="button">' + esc(t('enter')) + '</button></div>' +
+    '<div id="loginStatus" class="hint" style="min-height:22px"></div><p class="hint" style="margin-top:14px">' + esc(t('enterHelp')) + '</p><p class="hint">' + esc(t('contact')) + '</p>' +
+    '<p class="hint" style="font-size:12px">page version 12 · ' + (DEMO ? 'demo' : 'live') + '</p></div>';
+  function go() {
+    var v = $('#codeIn').value.replace(/\D/g, ''); if (!v) { $('#loginStatus').textContent = 'Please type your secret code first.'; return; }
+    var b = $('#enterBtn'); b.disabled = true; $('#loginStatus').textContent = 'Checking…';
+    var done = false;
+    setTimeout(function () { if (!done) { b.disabled = false; $('#loginStatus').textContent = 'No answer yet. Please check your internet and press Enter again.'; } }, 20000);
+    api({ action: 'state', code: v }).then(function (res) {
+      done = true; b.disabled = false;
+      if (!res.ok) return showLogin(t(res.error) !== res.error ? t(res.error) : (t('server') + ' [' + res.error + (res.detail ? ': ' + res.detail : '') + ']'));
+      code = v; store('thea_code', v); S = null; prevLead = {}; prevHigh = {};
+      apply(res); render(); startPolling();
+    }).catch(function (e) { done = true; b.disabled = false; $('#loginStatus').textContent = 'Problem: ' + e; });
+  }
+  $('#enterBtn').onclick = go;
+  $('#codeIn').onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); go(); } };
+}
+function demoBanner() {
+  return '<div class="demo"><b>DEMO MODE</b> – this page is not connected to Google yet, so nothing is shared between people. Try it: buyer secret codes <b>111111</b>, <b>222222</b>, <b>333333</b> · admin secret code <b>99999999</b>. ' +
+    '<button class="btn sm" data-act="resetdemo">Reset demo</button></div>';
+}
+function doLogout() { code = ''; S = null; store('thea_code', null); clearInterval(poll); clearInterval(tick); closeModal(); }
+
+/* ---------- render ---------- */
+function headerHtml(extra) {
+  var s = S.sale;
+  var line = [s.saleNo, s.date].filter(Boolean).map(esc).join(' &nbsp;·&nbsp; ');
+  if (S.role === 'admin') return (DEMO ? demoBanner() : '') + '<div class="stickybar" id="sb"><div class="top" style="padding-bottom:4px;margin-bottom:2px;border-bottom-width:2px;flex-wrap:nowrap"><div class="ttl"><span class="co" style="font-size:18px">' + esc(s.company) + '</span> <span class="hint">' + line + '</span></div>' + (extra || '') + '<button class="btn" data-act="logout">Log out</button></div></div>';
+  return (DEMO ? demoBanner() : '') + '<div class="stickybar" id="sb"><div class="top"><div class="ttl"><div class="co">' + esc(s.company) + '</div><div class="sub">' + line + '</div></div><div class="tools">' +
+    (S.role === 'buyer' ? '<button class="btn" data-act="lang">' + esc(t('lang')) + '</button>' : '') +
+    '<button class="btn" data-act="logout">' + esc(S.role === 'buyer' ? t('logout') : 'Log out') + '</button></div></div>' + (extra || '') + '</div>';
+}
+function fitScroll() {
+  var boxes = document.querySelectorAll('#app .scroll');
+  for (var i = 0; i < boxes.length; i++) {
+    var b = boxes[i]; b.style.maxHeight = 'none'; var lw = b.querySelector('th.stick'); if (lw) b.style.setProperty('--lotw', lw.offsetWidth + 'px');
+    var top = b.getBoundingClientRect().top + window.pageYOffset;
+    var below = 0, n = b.parentNode.nextElementSibling || null, x = b.nextElementSibling;
+    while (x) { below += x.offsetHeight + 20; x = x.nextElementSibling; }
+    b.style.maxHeight = Math.max(260, window.innerHeight - top - below - 24) + 'px';
+  }
+}
+window.addEventListener('resize', fitScroll);
+function fixBar() { var cb = $('.bchips'); document.documentElement.style.setProperty('--chipsh', (cb ? cb.offsetHeight : 0) + 'px'); var sb = $('#sb'); document.documentElement.style.setProperty('--barh', (sb ? sb.offsetHeight : 0) + 'px'); }
+window.addEventListener('resize', fixBar);
+function render() {
+  if (!S) return showLogin();
+  pendingRender = false;
+  if (S.role === 'admin') renderAdmin(); else renderBuyer();
+  fixBar(); fitScroll();
+}
+
+function lotClass(l) {
+  if (l.status === 'sold') return 'sold';
+  if (l.status === 'na') return 'na';
+  if (l.lead) return 'lead';
+  if (l.my > 0 || l.high > 0) return 'behind';
+  return '';
+}
+function nextBid(l) { var inc = S.sale.increment || 3; return l.high > 0 ? round2(l.high + inc) : (l.startPrice > 0 ? l.startPrice : 0); }
+
+function renderBuyer() {
+  var s = S.sale, h = headerHtml(s.open ? '<div class="bar"><div>' + (s.end > 0 ? esc(t('closesIn')) + ' <span class="count" id="count">' + fmtCount(s.end - nowMs()) + '</span>' : '<b>' + esc(t('noEnd')) + '</b>') + '</div><div id="urgent" style="color:#b3261e;font-weight:700"></div></div>' : '');
+  if (!s.open) {
+    var msg = '<div class="msg neu"><b>' + esc(t('notOpen')) + '</b>' +
+      (s.mode === 'scheduled' && s.start > nowMs() ? '<br>' + esc(t('opensAt', { when: fmtWhen(s.start) })) + '<br>' + esc(t('comeBack')) : (s.mode === 'scheduled' && s.end && nowMs() >= s.end ? '<br>' + esc(t('closedNow')) : '')) + '</div>';
+    $('#app').innerHTML = h + '<div class="hello" style="margin:10px 0;font-size:19px">' + esc(t('hello', { name: S.name })) + '</div>' + msg + '<p class="foot">' + esc(t('contact')) + '</p>';
+    return;
+  }
+  var lots = S.lots, cLead = 0, cBehind = 0, cNone = 0;
+  lots.forEach(function (l) { var c = lotClass(l); if (l.status !== 'open') return; if (c === 'lead') cLead++; else if (c === 'behind') cBehind++; else cNone++; });
+  var shown = lots.filter(function (l) {
+    if (filter === 'all') return true;
+    if (l.status !== 'open') return false;
+    var c = lotClass(l); return (filter === 'lead' && c === 'lead') || (filter === 'behind' && c === 'behind') || (filter === 'none' && c === '');
+  });
+  var rows = shown.map(function (l) {
+    var c = lotClass(l), act = '', mine = '', high = '';
+    if (l.status === 'sold') {
+      high = '<span class="hi">₹' + inr(l.high) + '</span>';
+      act = '<span class="status">' + (l.won ? esc(t('won', { p: inr(l.high) })) : esc(t('sold'))) + '</span>';
+      if (l.won) c = 'lead';
+    } else if (l.status === 'na') { high = '—'; act = '<span class="status">' + esc(t('na')) + '</span>'; }
+    else {
+      high = l.high > 0 ? '<span class="hi">₹' + inr(l.high) + '</span>' : '<span class="small">' + esc(t('noBidsYet')) + '</span>' + (l.startPrice > 0 ? '<br><span class="small">' + esc(t('startAt', { p: inr(l.startPrice) })) + '</span>' : '');
+      mine = l.my > 0 ? '<span class="hi">₹' + inr(l.my) + '</span>' : '—';
+      if (l.lead) act = '<div class="status">' + esc(t('leading')) + '</div><div class="acts"><button class="btn sm" data-act="bid" data-id="' + l.id + '">' + esc(t('change')) + '</button></div>';
+      else if (c === 'behind') {
+        var nb = nextBid(l);
+        act = '<div class="status small" style="margin-bottom:4px">' + esc(l.my > 0 ? t('behind') : t('notYet')) + '</div><div class="acts"><button class="btn warn" data-act="bid" data-id="' + l.id + '" data-a="' + nb + '">' + esc(t('raiseTo', { a: inr(nb) })) + '</button><button class="btn sm" data-act="bid" data-id="' + l.id + '">' + esc(t('other')) + '</button></div>';
+      } else act = '<div class="small" style="margin-bottom:4px">' + esc(t('first')) + '</div><button class="btn pri" data-act="bid" data-id="' + l.id + '">' + esc(t('bid')) + '</button>';
+    }
+    return '<tr class="' + c + (changedLots[l.id] ? ' changed' : '') + '"><td class="first"><div class="lotc">' + esc(t('lot')) + ' ' + esc(l.lotNo) + '</div><div>' + esc(l.grade) + '</div><div class="small">' + l.bags + ' × ' + l.perBag + ' = ' + inr(l.qty) + ' kg</div></td>' +
+      '<td class="n">' + high + '</td><td class="n">' + mine + '</td><td class="act">' + act + '</td></tr>';
+  }).join('');
+  var chip = function (k, label, cls) { return '<button class="chip ' + (cls || '') + (filter === k ? ' on' : '') + '" data-act="filter" data-k="' + k + '">' + esc(label) + '</button>'; };
+  $('#app').innerHTML = h +
+    '<div style="font-size:19px;margin:6px 0">' + esc(t('hello', { name: S.name })) + '</div>' +
+    (s.note ? '<div class="note">' + esc(s.note) + '</div>' : '') +
+    '<div class="chips bchips">' + chip('all', t('all'), '') + chip('lead', t('sumLead', { n: cLead }), 'g') + chip('behind', t('sumBehind', { n: cBehind }), 'o') + chip('none', t('sumNone', { n: cNone }), '') + '</div>' +
+    '<table class="sheet buyer"><thead><tr><th>' + esc(t('lot')) + ' / ' + esc(t('grade')) + '</th><th class="n">' + esc(t('highest')) + '</th><th class="n">' + esc(t('yourBid')) + '</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>' +
+    (lots.length ? '' : '<div class="msg neu">' + esc(t('noLots')) + '</div>') + '<p class="foot">' + esc(t('perKg')) + '<br>' + esc(t('canChange')) + '<br>' + esc(t('contact')) + '</p>';
+  onTick();
+}
+
+/* ---------- bid sheet (buyer) ---------- */
+var M = null;
+function openBid(id, preset) {
+  var l = S.lots.filter(function (x) { return x.id === id; })[0]; if (!l) return;
+  var a = preset || (l.lead ? l.my : (nextBid(l) || ''));
+  M = { id: id, amount: a, saving: false, err: '' };
+  var el = $('#modal');
+  el.innerHTML = '<div class="sheetbox"><h3 id="mT"></h3><div id="mKV"></div><div class="stepper"><button data-m="dec">−</button><input id="mIn" inputmode="decimal"><button data-m="inc">+</button></div><div class="quick" id="mQ"></div><div id="mDyn"></div></div>';
+  el.classList.add('on');
+  $('#mIn').value = a;
+  $('#mIn').oninput = function () { M.amount = this.value.replace(/[^0-9.]/g, ''); M.err = ''; updateModal(); };
+  updateModal();
+  setTimeout(function () { var i = $('#mIn'); if (i) { i.focus(); i.select(); } }, 50);
+}
+function closeModal() { M = null; var el = $('#modal'); el.classList.remove('on'); el.innerHTML = ''; }
+function curLot() { return S && S.lots ? S.lots.filter(function (x) { return x.id === M.id; })[0] : null; }
+function updateModal() {
+  if (!M) return;
+  var l = curLot(); if (!l) return closeModal();
+  var amt = parseFloat(M.amount) || 0, inc = S.sale.increment || 3;
+  $('#mT').textContent = t('mTitle', { lot: l.lotNo, grade: l.grade });
+  $('#mKV').innerHTML = '<div class="kv"><span>' + esc(t('mHigh')) + '</span><b>' + (l.high > 0 ? '₹' + inr(l.high) : esc(t('mNone'))) + '</b></div><div class="kv"><span>' + esc(t('mMine')) + '</span><b>' + (l.my > 0 ? '₹' + inr(l.my) : esc(t('mNone'))) + '</b></div>';
+  var q = '', base = l.high > 0 ? l.high : (l.startPrice || 0);
+  if (base > 0) { var first = l.high > 0 ? round2(l.high + inc) : base; [0, 5, 10, 15].forEach(function (d) { var v = round2(first + d); q += '<button data-m="set" data-v="' + v + '">₹' + inr(v) + '</button>'; }); }
+  $('#mQ').innerHTML = q;
+  var w = '', lead = amt > l.high || (l.lead && amt >= l.high), jump = l.high > 0 && amt > l.high + 300;
+  var below = l.high > 0 && amt < l.high && !(l.lead && amt === l.my), same = l.high > 0 && amt === l.high && !l.lead;
+  if (amt > 0) {
+    w += '<div style="font-size:19px;margin:6px 0;text-align:center"><b>' + esc(t('mTotal', { t: inr(Math.round(amt * l.qty)), kg: inr(l.qty) })) + '</b></div>';
+    if (l.lead && amt === l.my) w += '<div class="msg good">' + esc(t('already')) + '</div>';
+    else if (below) w += '<div class="msg bad"><b>' + esc(t('belowHigh', { h: inr(l.high) })) + '</b></div>';
+    else if (same) w += '<div class="msg bad"><b>' + esc(t('sameHigh', { h: inr(l.high) })) + '</b></div>';
+    else if (jump) w += '<div class="msg bad">' + esc(t('bigJump', { h: inr(l.high) })) + '</div>';
+    else if (lead) w += '<div class="msg good">' + esc(t('willLead')) + '</div>';
+    else w += '<div class="msg neu">' + esc(t('notLead', { h: inr(l.high) })) + '</div>';
+  }
+  if (M.err) w += '<div class="msg bad">' + esc(M.err) + '</div>';
+  var warnBtn = jump || below || same;
+  var label = M.saving ? t('saving') : (jump ? t('sure', { a: inr(amt) }) : (below || same ? t('confirmAnyway', { a: inr(amt) }) : t('confirm', { a: inr(amt) })));
+  w += '<div class="mb"><button class="btn" data-m="cancel">' + esc(t('cancel')) + '</button><button class="btn ' + (warnBtn ? 'warn' : 'go') + ' big" style="flex:2" data-m="ok"' + ((amt <= 0 || M.saving || (l.lead && amt === l.my)) ? ' disabled' : '') + '>' + esc(label) + '</button></div>';
+  $('#mDyn').innerHTML = w;
+}
+$('#modal').addEventListener('click', function (e) {
+  if (e.target === this) return closeModal();
+  var b = e.target.closest('[data-m]'); if (!b || !M) return;
+  var m = b.getAttribute('data-m'), inc = (S.sale.increment || 3), cur = parseFloat(M.amount) || 0;
+  if (m === 'cancel') closeModal();
+  else if (m === 'inc') { M.amount = String(round2(cur + inc)); $('#mIn').value = M.amount; updateModal(); }
+  else if (m === 'dec') { M.amount = String(Math.max(0, round2(cur - inc))); $('#mIn').value = M.amount; updateModal(); }
+  else if (m === 'set') { M.amount = b.getAttribute('data-v'); $('#mIn').value = M.amount; updateModal(); }
+  else if (m === 'ok') {
+    M.saving = true; M.err = ''; updateModal();
+    var id = M.id, amount = parseFloat(M.amount);
+    api({ action: 'bid', code: code, lotId: id, amount: amount }).then(function (res) {
+      if (!M) return;
+      if (!res.ok) { M.saving = false; M.err = t(res.error, res.extra ? { min: inr(res.extra.min) } : null); if (res.error === 'closed') { refresh(true); } updateModal(); return; }
+      applied = ++seq; apply(res);
+      closeModal(); render();
+      toast(t('saved', { a: inr(res.placed.amount), lot: res.placed.lotNo }), 'good', 5000);
+      if (res.extended) toast(t('extended', { m: res.extended }), 'neu', 7000);
+    });
+  }
+});
+
+/* ---------- ADMIN ---------- */
+var adminMsg = '';
+function pill(s) { return s.open ? '<span class="pill on">● OPEN</span>' : (s.mode === 'scheduled' ? '<span class="pill sch">◔ SCHEDULED</span>' : '<span class="pill off">○ CLOSED</span>'); }
+function leaderOf(lotId) {
+  var best = null;
+  S.bids.forEach(function (b) { if (b.lotId === lotId && b.amount > 0 && (!best || b.amount > best.amount || (b.amount === best.amount && b.ts < best.ts))) best = b; });
+  return best;
+}
+function buyerName(id) { var b = S.buyers.filter(function (x) { return x.id === id; })[0]; return b ? b.name : ''; }
+
+function renderAdmin() {
+  var s = S.sale;
+  var tabs = [['bids', '1. Bids'], ['lots', '2. Create / edit sale'], ['buyers', '3. Buyers'], ['sale', '4. Sale settings'], ['admin', '5. Admin code']].map(function (x) { return '<button class="tab' + (tab === x[0] ? ' on' : '') + '" data-act="tab" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('');
+  var quick = s.open ? '<button class="btn red" data-act="quick" data-k="closed">Close auction now</button>' : '<button class="btn go" data-act="quick" data-k="open">Open auction now</button>';
+  var body = tab === 'bids' ? adminBids() : tab === 'lots' ? adminLots() : tab === 'buyers' ? adminBuyers() : tab === 'admin' ? adminCodeTab() : adminSale();
+  var bar = '<div class="bar" style="margin:0;flex:1;flex-wrap:nowrap"><div style="white-space:nowrap"><b>ADMIN</b> ' + pill(s) + ' <span class="count" id="acount" style="font-size:18px;margin-left:8px"></span>' +
+    (s.mode === 'scheduled' && s.start ? '<span class="hint" style="margin-left:8px">' + esc(fmtWhen(s.start)) + (s.end ? ' → ' + esc(fmtWhen(s.end)) : '') + '</span>' : '') + '</div><div class="acts"><button class="btn pri" data-act="report">📋 Report card</button>' + quick + '</div></div>';
+  var rep = '';
+  if (reportOpen) {
+    var txt = buildReport();
+    rep = '<div class="msg"><b>Report card</b> – ready to paste in your WhatsApp group (updates when you press Report card again)' +
+      '<textarea id="repTa" readonly rows="14" style="width:100%;margin:6px 0;font-family:Consolas,monospace;font-size:14px">' + esc(txt) + '</textarea>' +
+      '<div class="acts"><button class="btn go" data-act="repcopy">Copy message</button><a class="btn pri" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(txt) + '">Send on WhatsApp</a><button class="btn" data-act="repclose">Close</button></div></div>';
+  }
+  $('#app').innerHTML = headerHtml(bar) + rep +
+    (adminMsg ? '<div class="msg ' + (/^✔/.test(adminMsg) ? 'good' : 'bad') + '">' + esc(adminMsg) + '</div>' : '') +
+    '<div class="tabs">' + tabs + '</div>' + body;
+  onTick();
+}
+
+var reportOpen = false;
+function buildReport() {
+  var tgCount = 0, tgMet = 0;
+  var s = S.sale, n = nowMs(), totalKg = 0, withBid = 0, noBid = [], sold = 0, na = 0, val = 0, kgIn = 0, lines = [], active = {};
+  S.bids.forEach(function (b) { if (b.amount > 0) active[b.buyerId] = 1; });
+  S.lots.forEach(function (l) {
+    totalKg += l.qty; var ld = leaderOf(l.id), lab = l.lotNo + ' ' + l.grade + ' (' + inr(l.qty) + ' kg)';
+    var tg = l.targetPrice > 0 ? l.targetPrice : 0, tgTxt = function (price) { if (!tg) return ''; tgCount++; if (price >= tg) { tgMet++; return ' | target ₹' + inr(tg) + ' ✔'; } return ' | target ₹' + inr(tg) + ' (₹' + inr(round2(tg - price)) + ' short)'; };
+    if (l.status === 'na') { na++; lines.push('⚪ ' + lab + ' – not available'); }
+    else if (l.status === 'sold') { sold++; val += l.qty * l.soldPrice; kgIn += l.qty; lines.push('🔵 ' + lab + ' – SOLD ₹' + inr(l.soldPrice) + ' to ' + (buyerName(l.soldTo) || 'outside buyer') + tgTxt(l.soldPrice)); }
+    else if (ld) { withBid++; val += l.qty * ld.amount; kgIn += l.qty; lines.push('🟢 ' + lab + ' – ₹' + inr(ld.amount) + ' – ' + buyerName(ld.buyerId) + tgTxt(ld.amount)); }
+    else { noBid.push(l.lotNo); lines.push('🔴 ' + lab + ' – NO BID' + (tg ? ' | target ₹' + inr(tg) : '')); }
+  });
+  var status = s.open ? 'OPEN' + (s.end > 0 ? ' – closes ' + fmtWhen(s.end) + ' (' + fmtCount(s.end - n).slice(0, 5) + ' hrs left)' : '') : (s.mode === 'scheduled' && s.start > n ? 'NOT STARTED – opens ' + fmtWhen(s.start) : 'CLOSED');
+  var out = ['*' + s.company + (s.saleNo ? ' – ' + s.saleNo : '') + '*', '📊 *SALE POSITION* as on ' + new Date(n).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }),
+    'Auction: *' + status + '*', '',
+    'Lots: ' + S.lots.length + ' | Total: ' + inr(totalKg) + ' kg',
+    '🟢 With bids: ' + withBid + '   🔴 No bid: ' + noBid.length + '   🔵 Sold: ' + sold + '   ⚪ Not available: ' + na,
+    'Buyers: ' + S.buyers.length + ' registered, ' + Object.keys(active).length + ' have bid',
+    'Value at highest bids: ₹' + inr(Math.round(val)) + (kgIn ? ' (avg ₹' + inr(Math.round(val / kgIn * 100) / 100) + '/kg on ' + inr(kgIn) + ' kg)' : ''),
+    tgCount ? '🎯 Target price met: ' + tgMet + ' of ' + tgCount + ' lots' : '', '',
+    '*Lot-wise – highest ₹/kg*'].concat(lines);
+  out = out.filter(function (x, i) { return !(x === '' && out[i - 1] === ''); });
+  if (noBid.length) out.push('', '⚠ *Need attention (no bid):* ' + noBid.join(', '));
+  return out.join('\n');
+}
+function adminBids() {
+  if (!S.lots.length) return '<div class="msg neu">No lots yet. Go to tab “2. Create / edit sale” and type the lots (lot number, grade, bags, kg per bag, target price).</div>';
+  if (!S.buyers.length) return '<div class="msg neu">No buyers yet for this sale. Go to tab “3. Buyers”, type the buyer names and press “Make secret codes”.</div>';
+  var head = '<th class="stick">Lot</th><th class="stick2">Grade</th><th class="n">kg</th><th>Status</th><th class="n">Target ₹/kg</th><th class="n">Highest ₹/kg</th><th>vs Target</th><th>Leader</th>' +
+    S.buyers.map(function (b) { return '<th class="n">' + esc(b.name) + '<br><span class="hint">' + esc(b.code) + '</span></th>'; }).join('') + '<th>Sell</th>';
+  var rows = S.lots.map(function (l) {
+    var ld = leaderOf(l.id), cells = S.buyers.map(function (b) {
+      var bid = S.bids.filter(function (x) { return x.lotId === l.id && x.buyerId === b.id; })[0];
+      var win = ld && bid && ld.buyerId === b.id;
+      return '<td class="cell' + (win ? ' win' : '') + '"><input type="number" step="any" data-f="bid" data-l="' + l.id + '" data-b="' + b.id + '" value="' + (bid ? bid.amount : '') + '"></td>';
+    }).join('');
+    var st = l.status === 'sold' ? 'SOLD ' + esc(buyerName(l.soldTo) || '(outside)') + ' ₹' + inr(l.soldPrice) : (l.status === 'na' ? 'Not available' : 'Open');
+    var tg = l.targetPrice > 0 ? l.targetPrice : 0, price = l.status === 'sold' ? l.soldPrice : (ld ? ld.amount : 0), vs = '';
+    if (tg && price) vs = price >= tg ? '<b style="color:#006100">✔ +₹' + inr(round2(price - tg)) + '</b>' : '<b style="color:#c55a11">▼ ₹' + inr(round2(tg - price)) + ' short</b>';
+    var below = tg && ld && ld.amount < tg;
+    var sell = l.status === 'sold' ? '<button class="btn sm" data-act="reopen" data-id="' + l.id + '">Reopen</button>' : (l.status === 'open' && ld ? '<button class="btn sm ' + (below ? 'warn' : 'go') + '" data-act="sell" data-id="' + l.id + '">Sold → leader</button>' : '');
+    return '<tr class="' + (l.status !== 'open' ? 'soldrow' : '') + '"><td class="stick lotc">' + esc(l.lotNo) + '</td><td class="stick2">' + esc(l.grade) + '</td><td class="n">' + inr(l.qty) + '</td><td>' + st + '</td><td class="n">' + (tg ? '₹' + inr(tg) : '') + '</td><td class="n"><b>' + (ld ? '₹' + inr(ld.amount) : '—') + '</b></td><td>' + vs + '</td><td>' + (ld ? esc(buyerName(ld.buyerId)) : '') + '</td>' + cells + '<td>' + sell + '</td></tr>';
+  }).join('');
+  return '<details class="hint"><summary>ℹ How this page works</summary>Green = highest bidder. Click any number to change it, then press Enter or click outside. Leave empty to remove a bid. Buyers only ever see the highest amount, never who or how much others bid. The target price is only visible to you.</details>' +
+    '<div class="scroll"><table class="sheet adm"><thead><tr>' + head + '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<p><button class="btn" data-act="csv">⬇ Download results (Excel/CSV)</button></p>';
+}
+
+/* ---- Lots tab: type lots straight into the table ---- */
+var newLot = {}, pend = {}, draft = [];
+function pcount() { return Object.keys(pend).length + draft.length; }
+function pbarHtml() {
+  var n = pcount();
+  return n ? '<div class="msg neu"><b>' + n + ' change' + (n > 1 ? 's' : '') + ' not saved yet</b> (yellow / blue rows). Buyers will NOT see them until you save. &nbsp; <button class="btn go" data-act="savelots">Save changes to the sale</button> <button class="btn" data-act="discard">Throw away changes</button></div>'
+    : '';
+}
+function lotVal(l, k) { return pend[l.id] && pend[l.id][k] !== undefined ? pend[l.id][k] : l[k]; }
+function adminLots() {
+  var rows = S.lots.map(function (l) {
+    var inp = function (f, type, w) {
+      var ch = pend[l.id] && pend[l.id][f] !== undefined, v = lotVal(l, f); if ((f === 'targetPrice' || f === 'startPrice') && !v) v = '';
+      return '<td' + (f === 'lotNo' ? ' class="stick"' : f === 'grade' ? ' class="stick2"' : '') + '><input class="' + (ch ? 'chg' : '') + '" type="' + (type || 'text') + '" ' + (type === 'number' ? 'step="any" ' : '') + 'data-f="lot" data-k="' + f + '" data-l="' + l.id + '" value="' + esc(v) + '"' + (w ? ' style="min-width:' + w + 'px"' : '') + '></td>'; };
+    var st = lotVal(l, 'status'), qty = (parseFloat(lotVal(l, 'bags')) || 0) * (parseFloat(lotVal(l, 'perBag')) || 0);
+    return '<tr>' + inp('lotNo', 'text', 80) + inp('grade', 'text', 150) + inp('bags', 'number') + inp('perBag', 'number') + '<td class="n">' + inr(qty) + '</td>' + inp('targetPrice', 'number') + inp('startPrice', 'number') + inp('remarks', 'text', 120) +
+      '<td><select class="' + (pend[l.id] && pend[l.id].status !== undefined ? 'chg' : '') + '" data-f="lot" data-k="status" data-l="' + l.id + '"><option value="open"' + (st === 'open' ? ' selected' : '') + '>Open for bids</option><option value="sold"' + (st === 'sold' ? ' selected' : '') + '>Sold</option><option value="na"' + (st === 'na' ? ' selected' : '') + '>Not available</option></select></td>' +
+      '<td><button class="btn sm red" data-act="dellot" data-id="' + l.id + '" title="Delete lot">✕</button></td></tr>';
+  }).join('');
+  var nv = function (k) { return esc(newLot[k] == null ? '' : newLot[k]); };
+  var nin = function (k, type, ph, w) { return '<td' + (k === 'lotNo' ? ' class="stick"' : k === 'grade' ? ' class="stick2"' : '') + '><input type="' + type + '" ' + (type === 'number' ? 'step="any" ' : '') + 'data-n="' + k + '" value="' + nv(k) + '" placeholder="' + ph + '"' + (w ? ' style="min-width:' + w + 'px"' : '') + '></td>'; };
+  var nq = (parseFloat(newLot.bags) || 0) * (parseFloat(newLot.perBag) || 0);
+  var newRow = '<tr class="newrow">' + nin('lotNo', 'text', 'Lot no. e.g. 512/26', 110) + nin('grade', 'text', 'Grade', 150) + nin('bags', 'number', 'Bags') + nin('perBag', 'number', 'Kg/bag') + '<td class="n" id="newTotal">' + (nq ? inr(nq) : '') + '</td>' + nin('targetPrice', 'number', 'Target') + nin('startPrice', 'number', 'optional') + nin('remarks', 'text', 'Note (only you)', 120) + '<td colspan="2"><button class="btn go" data-act="addnew">＋ Add row</button></td></tr>';
+  var drows = draft.map(function (d, i) {
+    var di = function (k, type, w) { return '<td' + (k === 'lotNo' ? ' class="stick"' : k === 'grade' ? ' class="stick2"' : '') + '><input type="' + type + '" ' + (type === 'number' ? 'step="any" ' : '') + 'data-dn="' + i + '" data-k="' + k + '" value="' + esc(d[k] == null ? '' : d[k]) + '"' + (w ? ' style="min-width:' + w + 'px"' : '') + '></td>'; };
+    return '<tr class="draft">' + di('lotNo', 'text', 80) + di('grade', 'text', 150) + di('bags', 'number') + di('perBag', 'number') + '<td class="n" id="dt' + i + '">' + inr((parseFloat(d.bags) || 0) * (parseFloat(d.perBag) || 0)) + '</td>' + di('targetPrice', 'number') + di('startPrice', 'number') + di('remarks', 'text', 120) + '<td><b>NEW</b><br><span class="hint">not saved</span></td><td><button class="btn sm red" data-act="deldraft" data-id="' + i + '" title="Remove this new row">✕</button></td></tr>';
+  }).join('');
+  return '<details class="hint"><summary>ℹ How this page works</summary><b>This table is your sale.</b> Type a new lot in the blue row at the top and press “Add row” (or Enter). To change a lot, click the box and type. Nothing goes to buyers until you press <b>Save changes to the sale</b> (you will be asked twice).<br>' +
+    '<b>Target ₹/kg</b> = the price you hope for. Only you see it. &nbsp; <b>Lowest bid</b> (optional) = buyers cannot bid below it, and they can see it. &nbsp; <b>Note</b> is only for you.</details>' +
+    '<div id="pbar">' + pbarHtml() + '</div>' +
+    '<div class="scroll"><table class="sheet adm"><thead><tr><th class="stick">Lot No</th><th class="stick2">Grade</th><th>Bags</th><th>Kg/bag</th><th class="n">Total kg</th><th>Target ₹/kg<br><span class="hint">only you see</span></th><th>Lowest bid ₹/kg<br><span class="hint">optional</span></th><th>Note<br><span class="hint">only you see</span></th><th>Status</th><th></th></tr></thead><tbody>' + newRow + drows + rows + '</tbody></table></div>' +
+    '<p><button class="btn" data-act="togglePaste">Or paste many lots from Excel</button></p>' +
+    '<div id="pasteBox" style="display:none"><p class="hint">In Excel select the rows with columns: Lot No, Grade, Bags, Kg per bag (a Total column and a Note column after those are fine), copy (Ctrl+C) and paste here.</p><textarea id="pasteTa" rows="6" style="width:100%" placeholder="482/26&#9;Mogra I Spl&#9;20&#9;28"></textarea>' +
+    '<p><label><input type="radio" name="prep" value="0" checked> Add to the lots above</label> &nbsp; <label><input type="radio" name="prep" value="1"> Replace all lots (also removes their bids)</label></p><button class="btn go" data-act="doPaste">Import</button></div>';
+}
+function addNewLot() {
+  if (!String(newLot.lotNo || '').trim()) { toast('Type the lot number first', 'bad', 3000); var f = $('[data-n=lotNo]'); if (f) f.focus(); return; }
+  draft.push({ lotNo: newLot.lotNo, grade: newLot.grade || '', bags: newLot.bags, perBag: newLot.perBag, startPrice: newLot.startPrice, targetPrice: newLot.targetPrice, remarks: newLot.remarks || '' });
+  newLot = {}; render(); var bx = $('.scroll'); if (bx) bx.scrollTop = 0; var f2 = $('[data-n=lotNo]'); if (f2) f2.focus();
+}
+function updPbar() { var b = $('#pbar'); if (b) b.innerHTML = pbarHtml(); }
+/* two-step "this goes live" confirmation (own box, works everywhere) */
+function cfm(steps, done) {
+  var el = $('#cfm'), i = 0;
+  function show() {
+    var st = steps[i];
+    el.innerHTML = '<div class="box"><h3>' + esc(st.title) + ' <span class="hint">(' + (i + 1) + ' of ' + steps.length + ')</span></h3><div style="font-size:17px">' + st.body + '</div><div class="mb"><button class="btn" data-c="no">Cancel</button><button class="btn ' + (i === steps.length - 1 ? 'red' : 'pri') + ' big" data-c="yes">' + esc(st.ok) + '</button></div></div>';
+    el.classList.add('on');
+  }
+  el.onclick = function (e) {
+    var b = e.target.closest('[data-c]');
+    if (!b) { if (e.target === el) { el.classList.remove('on'); } return; }
+    if (b.getAttribute('data-c') === 'no') { el.classList.remove('on'); el.innerHTML = ''; return; }
+    i++; if (i < steps.length) show(); else { el.classList.remove('on'); el.innerHTML = ''; done(); }
+  };
+  show();
+}
+function liveSteps(what) {
+  var live = S && S.sale && S.sale.open;
+  return [
+    { title: 'This will go to the LIVE sale', body: what + '<br><br><b>' + (live ? 'The auction is OPEN right now – buyers will see this change immediately.' : 'Buyers will see this as soon as the auction is open.') + '</b>', ok: 'Yes, continue' },
+    { title: 'Are you really sure?', body: 'Please check once more. After you press the red button the change is <b>live</b>.', ok: 'Yes, save to live sale' }
+  ];
+}
+function saveAllLots() {
+  var lots = [];
+  Object.keys(pend).forEach(function (id) { var o = { id: id }; for (var k in pend[id]) o[k] = pend[id][k]; lots.push(o); });
+  draft.forEach(function (d) { lots.push(d); });
+  var n = lots.length;
+  adminCall({ action: 'a_saveLots', lots: lots }, n + ' change' + (n > 1 ? 's' : '') + ' saved to the sale').then(function (r) { if (r && r.ok) { pend = {}; draft = []; render(); } });
+}
+
+var DEF_TPL = 'Dear {name},\n\nYour secret code to log in to the e-auction portal for {sale} is: {code}\n\nThis code is confidential. Please do not share it with anyone.\n\nE-auction portal link: {link}';
+function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? v : d; } catch (e) { return d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function portalLink() { return lsGet('thea_link', location.href.split('#')[0].split('?')[0]); }
+function buyerMsg(b) {
+  var s = S.sale, sale = (s.company || '') + (s.saleNo ? ' – ' + s.saleNo : '') + (s.date ? ' (' + s.date + ')' : '');
+  return lsGet('thea_tpl', DEF_TPL).split('{name}').join(b.name).split('{code}').join(b.code).split('{sale}').join(sale).split('{link}').join(portalLink());
+}
+function copyText(txt, okMsg) {
+  var done = function () { toast('✔ ' + okMsg, 'good', 2500); };
+  var fb = function () { var ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.focus(); ta.select(); var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} ta.remove(); ok ? done() : toast('Could not copy. Please select the text and press Ctrl+C.', 'bad', 4000); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, fb); else fb();
+}
+function adminBuyers() {
+  var counts = {}; S.bids.forEach(function (b) { if (b.amount > 0) counts[b.buyerId] = (counts[b.buyerId] || 0) + 1; });
+  var rows = S.buyers.map(function (b) {
+    return '<tr><td>' + esc(b.name) + '</td><td class="n"><b style="font-size:19px;letter-spacing:2px">' + esc(b.code) + '</b></td><td class="n">' + (counts[b.id] || 0) + '</td>' +
+      '<td><button class="btn sm go" data-act="copymsg" data-id="' + b.id + '">📋 Copy message</button> <a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(buyerMsg(b)) + '">WhatsApp</a></td>' +
+      '<td><button class="btn sm" data-act="newcode" data-id="' + b.id + '">New code</button> <button class="btn sm red" data-act="delbuyer" data-id="' + b.id + '">Remove</button></td></tr>';
+  }).join('');
+  var others = S.sales.filter(function (x) { return x.id !== S.sale.id && x.buyers > 0; });
+  var copyBox = others.length ? '<p><b>Same buyers as another sale:</b> <select id="cbFrom">' + others.map(function (x) { return '<option value="' + x.id + '">' + esc(x.saleNo || x.company) + (x.date ? ' (' + esc(x.date) + ')' : '') + ' – ' + x.buyers + ' buyers</option>'; }).join('') + '</select> <button class="btn go" data-act="copybuyers">Add these buyers here (same codes)</button><br><span class="hint">They keep the same code, so you do not need to send new codes. Names already here are skipped.</span></p>' : '';
+  var add = '<details' + (S.buyers.length ? '' : ' open') + '><summary><b>➕ Add buyers</b> (type names, or copy from another sale)</summary>' + copyBox +
+    '<p class="hint">Type one buyer name per line and press the button. All of them get a random 6-digit secret code at once.</p>' +
+    '<textarea id="namesTa" rows="5" style="width:100%;max-width:420px" placeholder="Ram Traders&#10;Shyam &amp; Co&#10;Gopal Tea House"></textarea><br><button class="btn go" data-act="addbuyers">Make secret codes</button></details>';
+  var tpl = '<details><summary><b>✉ Wording of the message to buyers</b> (you can change it)</summary>' +
+    '<p class="hint">Use {name} {code} {sale} {link} where the buyer\'s name, code, sale and link should come.</p>' +
+    '<textarea id="tplTa" rows="8" style="width:100%;max-width:560px">' + esc(lsGet('thea_tpl', DEF_TPL)) + '</textarea><br>Portal link: <input type="text" id="linkIn" style="width:100%;max-width:560px;padding:6px" value="' + esc(portalLink()) + '"><br>' +
+    '<button class="btn go" data-act="savetpl">Save wording</button> <button class="btn" data-act="resettpl">Back to the original wording</button></details>';
+  var created = S.created && S.created.length ? '<div class="msg good"><b>' + S.created.length + ' secret codes are ready.</b> Use “Copy message” in the table below for each buyer. Send each buyer ONLY his own code.</div>' : '';
+  return '<h2>Buyers and secret codes – ' + esc(S.sale.saleNo || S.sale.company) + '</h2>' + created + add + tpl +
+    (S.buyers.length ? '<p style="margin:10px 0 4px"><button class="btn go" data-act="copyall">📋 Copy all messages</button> <button class="btn" data-act="copycodes">Copy list (name + code)</button> <button class="btn" data-act="printcodes">Print list</button> <button class="btn red" data-act="newcodeall">New codes for everyone</button></p>' +
+      '<div class="scroll"><table class="sheet adm"><thead><tr><th class="stick">Name</th><th class="n">Secret code</th><th class="n">Lots bid</th><th>Message to buyer</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>' : '<p class="hint">No buyers yet.</p>');
+}
+
+function hform(cols) {
+  return '<div class="hf"><table class="sheet adm"><thead><tr>' + cols.map(function (c) { return '<th>' + c[0] + (c[2] ? '<br><span class="hint">' + c[2] + '</span>' : '') + '</th>'; }).join('') + '</tr></thead><tbody><tr>' + cols.map(function (c) { return '<td>' + c[1] + '</td>'; }).join('') + '</tr></tbody></table></div>';
+}
+function adminCodeTab() {
+  return '<h2>Admin secret code</h2>' +
+    '<p class="hint" style="font-size:15px">This is the code you (and your team) use to enter the admin page. <b>If someone leaves your team, change it here.</b> The old code stops working at once – even if that person is already logged in. Then give the new code only to the people who should have it.<br>Write the new code down before you press Change. (If you ever forget it, it is also saved in your Google Sheet, on the tab called Settings, next to “adminCode”.)</p>' +
+    hform([['New admin secret code', '<input type="text" id="newAdmin" inputmode="numeric" placeholder="at least 6 digits">', '6 to 10 digits'], ['', '<button class="btn" data-act="randadmin">Make a random code</button>'], ['', '<button class="btn red" data-act="setadmin">Change admin secret code</button>']]);
+}
+function adminSale() {
+  var s = S.sale;
+  var opts = S.companies.map(function (c) { return '<option' + (c === s.company ? ' selected' : '') + '>' + esc(c) + '</option>'; });
+  if (S.companies.indexOf(s.company) < 0) opts.unshift('<option selected>' + esc(s.company) + '</option>');
+  var salesOpts = S.sales.map(function (x) { return '<option value="' + x.id + '"' + (x.id === s.id ? ' selected' : '') + '>' + esc(x.company + ' – ' + x.saleNo + (x.date ? ' (' + x.date + ')' : '')) + '</option>'; }).join('');
+  return '<h2>This sale</h2>' + hform([
+    ['Company name', '<select id="fCompany">' + opts.join('') + '</select>'],
+    ['Sale number', '<input type="text" id="fSaleNo" value="' + esc(s.saleNo) + '" placeholder="e.g. Sale No-33">'],
+    ['Sale date', '<input type="text" id="fDate" value="' + esc(s.date) + '">'],
+    ['Message to buyers', '<input type="text" id="fNote" value="' + esc(s.note) + '" placeholder="e.g. Payment within 3 days">', 'optional']]) +
+    '<h2>When is the auction open?</h2>' + hform([
+    ['Auction is', '<select id="fMode"><option value="closed"' + (s.mode === 'closed' ? ' selected' : '') + '>Closed (buyers cannot see lots)</option><option value="open"' + (s.mode === 'open' ? ' selected' : '') + '>Open now (until I close it)</option><option value="scheduled"' + (s.mode === 'scheduled' ? ' selected' : '') + '>Scheduled (opens and closes by itself)</option></select>'],
+    ['Starts', '<input type="datetime-local" id="fStart" value="' + istInput(s.start) + '">', 'Indian time'],
+    ['Ends', '<input type="datetime-local" id="fEnd" value="' + istInput(s.end) + '">', 'Indian time'],
+    ['Suggested raise ₹/kg', '<input type="number" step="any" id="fInc" value="' + esc(s.increment) + '">', 'buyers can bid any amount'],
+    ['Extend if bid in last … min', '<input type="number" id="fExt" value="' + esc(s.extendMin) + '">', '0 = never; 2 recommended']]) +
+    '<button class="btn pri big" data-act="savesale">Save settings</button>' +
+    '<h2>Company names</h2><textarea id="fCompanies" rows="3" style="width:100%;max-width:420px">' + esc(S.companies.join('\n')) + '</textarea><br><button class="btn" data-act="savecompanies">Save company names</button>' +
+    '<h2>Start a new sale</h2>' + hform([
+    ['Company', '<select id="nCompany">' + S.companies.map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('') + '</select>'],
+    ['Sale number', '<input type="text" id="nSaleNo" placeholder="Sale No-33">'],
+    ['Date', '<input type="text" id="nDate">'],
+    ['Copy the lots from', '<select id="nCopy"><option value="">Nothing (empty sale)</option>' + salesOpts + '</select>'],
+    ['Same buyers as', '<select id="nCopyB"><option value="">No buyers (make new)</option>' + S.sales.filter(function (x) { return x.buyers > 0; }).map(function (x) { return '<option value="' + x.id + '">' + esc((x.saleNo || x.company) + ' – ' + x.buyers + ' buyers') + '</option>'; }).join('') + '</select>', 'same codes are kept']]) +
+    '<button class="btn go" data-act="newsale">Create new sale</button><div class="hint">A new sale has no buyers – make new secret codes for it in tab 3. After creating, type or change the lots in tab 2.</div>' +
+    '<h2>Switch to another sale</h2><select id="swSale">' + salesOpts + '</select> <button class="btn" data-act="switchsale">Show this sale</button>' +
+    '<h2>Other</h2><p><button class="btn red" data-act="clearbids">Clear all bids in this sale (use after testing)</button></p>';
+}
+
+/* ---------- admin calls ---------- */
+function adminCall(req, okMsg) {
+  req.code = code; busy = false;
+  var my = ++seq;
+  return api(req).then(function (res) {
+    if (!res.ok) {
+      var why = res.error === 'bad_times' ? 'The end time must be after the start time.' : res.error === 'code_used' ? 'That secret code is already used by a buyer.' : res.error === 'network' ? 'No internet connection.' : ('Could not save (' + res.error + ')');
+      adminMsg = why; toast(why, 'bad', 5000);
+      if (!isEditing()) render(); return res;
+    }
+    if (my >= applied) { applied = my; apply(res); }
+    adminMsg = '';
+    if (okMsg) toast('✔ ' + okMsg, 'good', 2200);
+    if (isEditing()) pendingRender = true; else render();
+    return res;
+  });
+}
+function val(id) { var e = $('#' + id); return e ? e.value : ''; }
+
+/* ---------- events ---------- */
+document.addEventListener('focusout', function () { setTimeout(function () { if (pendingRender && !isEditing() && S && S.role === 'admin') render(); }, 150); });
+
+document.getElementById('app').addEventListener('input', function (e) {
+  var dn = e.target.getAttribute && e.target.getAttribute('data-dn');
+  if (dn !== null && dn !== undefined) { var d = draft[+dn], kk = e.target.getAttribute('data-k'); if (d) { d[kk] = e.target.value; var tt = $('#dt' + dn); if (tt) tt.textContent = inr((parseFloat(d.bags) || 0) * (parseFloat(d.perBag) || 0)); updPbar(); } return; }
+  var k = e.target.getAttribute && e.target.getAttribute('data-n'); if (!k) return;
+  newLot[k] = e.target.value;
+  var q = (parseFloat(newLot.bags) || 0) * (parseFloat(newLot.perBag) || 0), t = $('#newTotal'); if (t) t.textContent = q ? inr(q) : '';
+});
+document.getElementById('app').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && e.target.getAttribute && e.target.getAttribute('data-n')) { e.preventDefault(); addNewLot(); }
+});
+document.getElementById('app').addEventListener('change', function (e) {
+  var el = e.target, f = el.getAttribute('data-f'); if (!f || !S || S.role !== 'admin') return;
+  if (f === 'bid') adminCall({ action: 'a_setBid', lotId: el.getAttribute('data-l'), buyerId: el.getAttribute('data-b'), amount: el.value }, 'Bid saved');
+  else if (f === 'lot') {
+    var id0 = el.getAttribute('data-l'), k0 = el.getAttribute('data-k'), orig = S.lots.filter(function (x) { return x.id === id0; })[0];
+    if (!orig) return;
+    var o0 = orig[k0] == null ? '' : String(orig[k0]), same = (String(el.value) === o0) || ((k0 === 'targetPrice' || k0 === 'startPrice' || k0 === 'bags' || k0 === 'perBag') && o0 !== '' && parseFloat(el.value) === parseFloat(o0)) || (el.value === '' && (o0 === '0'));
+    if (same) { if (pend[id0]) { delete pend[id0][k0]; if (!Object.keys(pend[id0]).length) delete pend[id0]; } el.classList.remove('chg'); }
+    else { pend[id0] = pend[id0] || {}; pend[id0][k0] = el.value; el.classList.add('chg'); }
+    updPbar();
+  }
+});
+
+document.addEventListener('click', function (e) {
+  var b = e.target.closest('[data-act]'); if (!b || b.closest('#modal')) return;
+  var act = b.getAttribute('data-act'), id = b.getAttribute('data-id');
+  if (act === 'lang') { lang = lang === 'en' ? 'hi' : 'en'; store('thea_lang', lang); S ? render() : showLogin(); }
+  else if (act === 'logout') { pend = {}; draft = []; doLogout(); showLogin(); }
+  else if (act === 'resetdemo') { demoStore.reset(); AuctionCore.seedDemo(demoStore); pend = {}; draft = []; doLogout(); showLogin(); }
+  else if (act === 'report') { reportOpen = true; render(); var rb = $('#repTa'); if (rb && rb.scrollIntoView) rb.scrollIntoView({ block: 'center' }); }
+  else if (act === 'repclose') { reportOpen = false; render(); }
+  else if (act === 'repcopy') {
+    var ta = $('#repTa'); if (!ta) return;
+    var done = function () { toast('✔ Copied. Now paste it in WhatsApp.', 'good', 3000); };
+    var fallback = function () { ta.focus(); ta.select(); try { document.execCommand('copy') ? done() : toast('Press Ctrl+C to copy', 'neu'); } catch (e) { toast('Press Ctrl+C to copy', 'neu'); } };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(done, fallback); else fallback();
+  }
+  else if (act === 'filter') { filter = b.getAttribute('data-k'); render(); }
+  else if (act === 'bid') openBid(id, b.getAttribute('data-a') ? parseFloat(b.getAttribute('data-a')) : null);
+  else if (act === 'tab') { tab = b.getAttribute('data-k'); S.created = null; render(); }
+  else if (act === 'quick') adminCall({ action: 'a_saveSale', sale: { mode: b.getAttribute('data-k') } }, b.getAttribute('data-k') === 'open' ? 'Auction is now OPEN' : 'Auction is now CLOSED');
+  else if (act === 'sell') adminCall({ action: 'a_sell', lotId: id }, 'Marked as sold to the highest bidder');
+  else if (act === 'reopen') adminCall({ action: 'a_saveLot', lot: { id: id, status: 'open' } }, 'Lot reopened');
+  else if (act === 'addnew') addNewLot();
+  else if (act === 'deldraft') { draft.splice(+id, 1); render(); }
+  else if (act === 'discard') { pend = {}; draft = []; render(); }
+  else if (act === 'savelots') { if (!pcount()) return; cfm(liveSteps('You are saving <b>' + pcount() + ' change(s)</b> to the lots of this sale.'), saveAllLots); }
+  else if (act === 'dellot') { var dl = S.lots.filter(function (x) { return x.id === id; })[0]; cfm(liveSteps('You are <b>deleting lot ' + esc(dl ? dl.lotNo : '') + '</b> and all bids on it.'), function () { adminCall({ action: 'a_deleteLot', lotId: id }, 'Lot deleted'); }); }
+  else if (act === 'randadmin') { var r8 = String(Math.floor(10000000 + Math.random() * 89999999)); var ni = $('#newAdmin'); if (ni) ni.value = r8; }
+  else if (act === 'togglePaste') { var pb = $('#pasteBox'); pb.style.display = pb.style.display === 'none' ? 'block' : 'none'; }
+  else if (act === 'doPaste') {
+    var rows = val('pasteTa').split(/\r?\n/).map(function (ln) { return ln.split('\t'); }).filter(function (c) { return c[0] && /\d/.test(c[0]) && !/^lot/i.test(c[0]); }).map(function (c) {
+      return { lotNo: c[0], grade: c[1] || '', bags: c[2], perBag: c[3], remarks: c[5] || '' };
+    });
+    if (!rows.length) { adminMsg = 'Nothing to import – copy the rows from Excel first.'; return render(); }
+    var rep = document.querySelector('input[name=prep]:checked').value === '1';
+    var goImp = function () { adminCall({ action: 'a_importLots', rows: rows, replace: rep }, rows.length + ' lots imported'); };
+    if (rep) cfm(liveSteps('You are <b>replacing ALL lots</b> of this sale with ' + rows.length + ' new lots. All bids are removed.'), goImp); else cfm(liveSteps('You are adding <b>' + rows.length + ' lots</b> to this sale.'), goImp);
+  }
+  else if (act === 'addbuyers') {
+    var names = val('namesTa').split(/\r?\n/).map(function (x) { return x.trim(); }).filter(Boolean);
+    if (!names.length) { adminMsg = 'Type at least one name.'; return render(); }
+    adminCall({ action: 'a_addBuyers', names: names }, names.length + ' secret codes made');
+  }
+  else if (act === 'delbuyer') { cfm([{ title: 'Remove this buyer?', body: 'His code stops working and all his bids are deleted.', ok: 'Yes, remove' }], function () { adminCall({ action: 'a_deleteBuyer', buyerId: id }, 'Buyer removed'); }); }
+  else if (act === 'copymsg') { var cb = S.buyers.filter(function (x) { return x.id === id; })[0]; if (cb) copyText(buyerMsg(cb), 'Message for ' + cb.name + ' copied. Now paste it in WhatsApp.'); }
+  else if (act === 'copyall') copyText(S.buyers.map(function (x) { return '*' + x.name + '*\n' + buyerMsg(x); }).join('\n\n----------------\n\n'), 'All ' + S.buyers.length + ' messages copied');
+  else if (act === 'savetpl') { var tv = val('tplTa'); if (tv.indexOf('{code}') < 0) { toast('The message must contain {code}', 'bad', 4000); return; } lsSet('thea_tpl', tv); lsSet('thea_link', val('linkIn').trim() || location.href); toast('✔ Wording saved', 'good', 2000); render(); }
+  else if (act === 'resettpl') { lsSet('thea_tpl', DEF_TPL); render(); }
+  else if (act === 'copybuyers') adminCall({ action: 'a_copyBuyers', fromSale: val('cbFrom') }, 'Buyers added with their same codes');
+  else if (act === 'newcodeall') cfm([{ title: 'Make new codes for everyone?', body: 'All ' + S.buyers.length + ' buyers of this sale get a NEW code. Their old codes stop working.', ok: 'Yes, continue' }, { title: 'Are you really sure?', body: 'You will have to send the new codes to every buyer again.', ok: 'Yes, make new codes' }], function () { adminCall({ action: 'a_newCodeAll' }, 'New codes made for everyone'); });
+  else if (act === 'newcode') adminCall({ action: 'a_newCode', buyerId: id }, 'New secret code made');
+  else if (act === 'copycodes') {
+    var txt = S.buyers.map(function (x) { return x.name + '\t' + x.code; }).join('\n');
+    if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function () { toast('Copied ✔', 'good', 2000); }, function () { toast('Could not copy', 'bad'); });
+  }
+  else if (act === 'printcodes') {
+    var w = window.open('', '_blank'); if (!w) return;
+    w.document.write('<title>Buyer secret codes</title><body style="font-family:Arial;font-size:20px"><h2>' + esc(S.sale.company) + ' – ' + esc(S.sale.saleNo) + '</h2><table border=1 cellpadding=8 style="border-collapse:collapse">' + S.buyers.map(function (x) { return '<tr><td>' + esc(x.name) + '</td><td><b>' + esc(x.code) + '</b></td></tr>'; }).join('') + '</table>'); w.document.close(); w.print();
+  }
+  else if (act === 'savesale') {
+    var st = istParse(val('fStart')), en = istParse(val('fEnd')), mode = val('fMode');
+    if (mode === 'scheduled' && !st) { adminMsg = 'Please fill the start time for a scheduled auction.'; return render(); }
+    var sv = { company: val('fCompany'), saleNo: val('fSaleNo'), date: val('fDate'), note: val('fNote'), mode: mode, start: st, end: en, increment: val('fInc'), extendMin: val('fExt') };
+    cfm(liveSteps('You are changing the <b>sale details / timing</b>.'), function () { adminCall({ action: 'a_saveSale', sale: sv }, 'Settings saved'); });
+  }
+  else if (act === 'savecompanies') adminCall({ action: 'a_setCompanies', companies: val('fCompanies').split(/\r?\n/) }, 'Company names saved');
+  else if (act === 'newsale') {
+    if (!val('nSaleNo').trim()) { adminMsg = 'Please type the new sale number.'; return render(); }
+    adminCall({ action: 'a_newSale', company: val('nCompany'), saleNo: val('nSaleNo'), date: val('nDate'), copyFrom: val('nCopy'), copyBuyersFrom: val('nCopyB') }, 'New sale created – now check the buyers in tab 3');
+    tab = 'buyers';
+  }
+  else if (act === 'switchsale') adminCall({ action: 'a_switchSale', saleId: val('swSale') }, 'Sale changed');
+  else if (act === 'clearbids') { cfm([{ title: 'Delete ALL bids?', body: 'Every bid of this sale is deleted. This cannot be undone.', ok: 'Yes, continue' }, { title: 'Are you really sure?', body: 'All bids will be gone.', ok: 'Yes, delete all bids' }], function () { adminCall({ action: 'a_clearBids' }, 'All bids cleared'); }); }
+  else if (act === 'setadmin') {
+    var nv = val('newAdmin').replace(/\D/g, '');
+    if (nv.length < 6 || nv.length > 10) { adminMsg = 'The admin secret code must be 6 to 10 digits.'; return render(); }
+    cfm([{ title: 'Change the admin secret code?', body: 'The new code will be <b style="font-size:24px;letter-spacing:3px">' + nv + '</b><br>Write it down now. The OLD code will stop working at once for everybody.', ok: 'Yes, continue' },
+      { title: 'Are you really sure?', body: 'Anyone who has the old code will be locked out. Only you (and whoever you tell) can enter with <b>' + nv + '</b>.', ok: 'Yes, change it' }],
+      function () { adminCall({ action: 'a_setAdminCode', newCode: nv }, 'Admin secret code changed').then(function (r) { if (r && r.ok) { code = nv; store('thea_code', nv); } }); });
+  }
+  else if (act === 'csv') {
+    var q = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+    var lines = [['Lot', 'Grade', 'Bags', 'Kg/bag', 'Total kg', 'Status', 'Target', 'Highest', 'Leader'].concat(S.buyers.map(function (x) { return x.name; })).map(q).join(',')];
+    S.lots.forEach(function (l) {
+      var ld = leaderOf(l.id);
+      lines.push([l.lotNo, l.grade, l.bags, l.perBag, l.qty, l.status === 'sold' ? 'SOLD to ' + buyerName(l.soldTo) + ' @ ' + l.soldPrice : l.status, l.targetPrice || '', ld ? ld.amount : '', ld ? buyerName(ld.buyerId) : ''].concat(S.buyers.map(function (x) {
+        var bd = S.bids.filter(function (y) { return y.lotId === l.id && y.buyerId === x.id; })[0]; return bd ? bd.amount : '';
+      })).map(q).join(','));
+    });
+    var blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'auction-results-' + (S.sale.saleNo || 'sale').replace(/\W+/g, '-') + '.csv'; document.body.appendChild(a); a.click(); a.remove();
+  }
+});
+
+/* ---------- start ---------- */
+(function () {
+  var saved = store('thea_code');
+  if (saved) {
+    $('#app').innerHTML = '<p style="text-align:center;margin-top:60px">…</p>';
+    api({ action: 'state', code: saved }).then(function (res) {
+      if (res.ok) { code = saved; apply(res); render(); startPolling(); } else showLogin();
+    });
+  } else showLogin();
+})();
+</script>
+</body>
+</html>
